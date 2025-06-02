@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Statistic Page</title>
+    <link rel="stylesheet" type="text/css" href="/css/statistic_page.css"/>
+    <link rel="icon" href="/ico/favicon.ico" type="image/x-icon">
+</head>
+<body>
+<div class="burger-menu" id="burgerButton" onclick="toggleMenu()">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+</div>
+<div class="menu" id="submenu">
+    <div class="menu-header">
+        <button class="close-button" onclick="toggleMenu()">✖</button>
+    </div>
+    <button onclick="returnBack()">Повернутись</button>
+</div>
+<div id="users-statistic"></div>
+<div id="spinner" class="spinner" style="display: none;"></div>
+<script src="/script/statistic_page.js"></script>
+</body>
+</html>

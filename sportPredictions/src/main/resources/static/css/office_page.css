@@ -1,0 +1,585 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-image: url("/images/background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+#resultsContainer, #match-container {
+    width: 100%;
+    max-width: 600px;
+}
+
+h2 {
+    color: #333;
+    border-bottom: 2px solid #333;
+    padding-bottom: 0;
+    text-align: center;
+}
+
+h3 {
+    font-size: 15px;
+    margin: 5px 5px;
+    color: #444;
+    text-align: left;
+}
+
+h4 {
+    color: #444;
+    text-align: center;
+}
+
+.date-group {
+    background: rgba(255, 255, 255, 0.9);
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#user-name{
+    background: rgba(255, 255, 255, 0.9);
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 550px;
+}
+
+.match {
+    display: flex;
+    flex-direction: column;
+    padding: 5px 5px;
+    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #ccc;
+}
+
+.match:last-child {
+    border-bottom: none;
+}
+
+.team-score {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.team-score:first-of-type {
+    margin-bottom: 5px;
+}
+
+.team-score:last-of-type {
+    margin-bottom: 0;
+}
+
+.team {
+    flex: 1;
+}
+
+.score {
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+.correct-prediction {
+    background-color: rgba(212, 237, 218, 0.7);
+}
+
+.date-group {
+    margin-bottom: 30px;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+button {
+    background-color: #42C2DF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s;
+    width: 100%;
+    display: block;
+    margin: 20px auto;
+    padding: 10px 0;
+    text-align: center;
+    border-radius: 10px;
+}
+
+button:hover {
+    background-color: #3594A9;
+}
+
+.spinner {
+    width: 200px;
+    height: 200px;
+    background-image: url("/images/spinner.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.message {
+    padding: 10px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 18px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    margin: 20px auto;
+    padding: 10px 0;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.error-message {
+    background-color: rgba(255, 0, 0, 0.1);
+    color: red;
+}
+
+.success-message {
+    background-color: rgba(212, 237, 218, 0.7);
+    color: green;
+}
+
+/* Оновлений стиль для бургер-меню */
+.burger-menu {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 45px;
+    height: 45px;
+    z-index: 1001;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    padding: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.burger-menu:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+}
+
+/* Змінюємо стиль, щоб бургер зникав при відкритому меню */
+.burger-menu.active {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.8);
+    transition: opacity 0.3s ease, visibility 0s 0.3s, transform 0.3s ease;
+}
+
+/* Стилізація смужок бургер-меню */
+.bar {
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(to right, #0057b8 0%, #ffd100 100%);
+    margin: 3px 0;
+    border-radius: 3px;
+    transition: 0.4s;
+}
+
+/* Стиль для шторки-меню */
+.menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 270px;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 240, 240, 0.95) 100%);
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: left 0.5s ease; /* Повільніша анімація */
+    overflow-y: auto;
+    padding-top: 80px;
+    border-radius: 0 15px 15px 0;
+}
+
+.menu.open {
+    left: 0;
+}
+
+.menu button {
+    display: block;
+    width: 90%;
+    margin: 10px auto;
+    padding: 12px 15px;
+    border: none;
+    background: rgba(255, 255, 255, 0.7);
+    text-align: left;
+    font-size: 16px;
+    color: #333;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.menu button:hover {
+    background-color: rgba(66, 194, 223, 0.2);
+    transform: translateX(5px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.menu-header {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.close-button {
+    background: rgba(255, 255, 255, 0.8) !important;
+    border-radius: 50% !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px !important;
+    cursor: pointer;
+    color: #555;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.3s ease !important;
+}
+
+.close-button:hover {
+    background: rgba(255, 220, 220, 0.9) !important;
+    transform: rotate(90deg) !important;
+}
+
+/* Напівпрозорий оверлей при відкритому меню */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.5s ease; /* Повільніша анімація */
+}
+
+.overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+.canceled-match {
+    position: relative;
+    top: 10px;
+    display: inline-block;
+}
+/* Competitions list styles */
+.competitions-wrapper {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.competitions-header {
+    padding: 10px 15px;
+    font-weight: bold;
+    color: #333;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+.competitions-items {
+    padding: 10px 15px;
+}
+
+.competition-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.competition-item:hover {
+    background-color: rgba(66, 194, 223, 0.1);
+}
+
+.country-name {
+    color: #555;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+.competition-name {
+    color: #333;
+    font-size: 13px;
+    margin-bottom: 3px;
+}
+
+.competition-spacer {
+    height: 10px;
+}
+
+/* Error message styling */
+.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+/* Competition item styling */
+.competition-item {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    padding: 8px 40px 8px 15px; /* Added right padding for the pin */
+    transition: background-color 0.2s;
+}
+
+/* Country name styling */
+.country-name {
+    width: 100%;
+    font-weight: bold;
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 3px;
+}
+
+/* Competition name styling */
+.competition-name {
+    width: 100%;
+    color: #333;
+    font-size: 13px;
+}
+
+/* Pin icon styling - positioned on right */
+.select-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0.3;
+    transition: opacity 0.2s;
+}
+
+.select-icon:hover {
+    opacity: 0.8;
+}
+
+.selected-competition {
+    background-color: rgba(76, 175, 80, 0.1);
+}
+
+.selected-competition .select-icon {
+    opacity: 1;
+}
+
+.competition-spacer {
+    height: 10px;
+}
+
+/* Save button container */
+.save-button-container {
+    padding: 0 15px 15px;
+    text-align: center;
+}
+
+/* Green save button */
+.save-competitions-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    max-width: 200px;
+}
+
+.save-competitions-btn:hover:not(:disabled) {
+    background-color: #45a049;
+}
+
+.save-competitions-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Green save button */
+.save-competitions-btn {
+    background-color: #4CAF50; /* Green color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    max-width: 200px;
+}
+
+/* Additional styles for save button in competitions menu */
+.save-button-container {
+    padding: 15px;
+    text-align: center;
+    border-top: 1px solid #ddd;
+    margin-top: 10px;
+    background-color: rgba(245, 245, 245, 0.5);
+}
+
+.save-competitions-btn {
+    background-color: #4CAF50 !important;
+    color: white !important;
+    padding: 15px 20px !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    border: none !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    max-width: 250px !important;
+    margin: 0 auto !important;
+    display: block !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+}
+
+.save-competitions-btn:hover:not(:disabled) {
+    background-color: #45a049 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+}
+
+.save-competitions-btn:disabled {
+    opacity: 0.7 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+/* Ensure the competitions wrapper allows proper scrolling */
+.competitions-wrapper {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+.competitions-items {
+    max-height: calc(100vh - 350px);
+    overflow-y: auto;
+    padding: 10px 15px;
+}
+
+/* Hide scrollbars for competitions menu */
+.competitions-wrapper {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.competitions-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.competitions-items {
+    max-height: calc(100vh - 350px);
+    overflow-y: auto;
+    padding: 10px 15px;
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.competitions-items::-webkit-scrollbar {
+    display: none;
+}
+
+/* Also hide main body scrollbar if needed */
+body {
+/* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbars for any container that might have them */
+#resultsContainer, #match-container {
+/* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#resultsContainer::-webkit-scrollbar,
+#match-container::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* Оновлення для кращого вигляду на мобільних пристроях */
+@media screen and (max-width: 800px) {
+    .burger-menu {
+        padding: 8px;
+    }
+
+    .menu {
+        width: 80%;
+    }
+
+    .menu button {
+        padding: 15px 10px;
+        font-size: 18px;
+    }
+
+    #user-name {
+        background: rgba(255, 255, 255, 0.9);
+        width: 90%;
+        margin: 10px;
+        padding: 10px;
+        margin-top: 50px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+}

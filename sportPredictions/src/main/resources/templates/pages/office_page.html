@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User's office</title>
+    <link rel="stylesheet" type="text/css" href="/css/office_page.css"/>
+    <link rel="icon" href="/ico/favicon.ico" type="image/x-icon">
+</head>
+<body>
+<div class="overlay" id="overlay"></div>
+<div class="burger-menu" id="burgerButton" onclick="toggleMenu()">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+</div>
+<div class="menu" id="submenu">
+    <div class="menu-header">
+        <button class="close-button" onclick="closeMenu()">✖</button>
+    </div>
+    <button onclick="showStatistics()">Statistic</button>
+    <button onclick="showRules()">Rules</button>
+    <div id="competitions-list" class="competitions-wrapper"></div>
+</div>
+<div id="user-name"></div>
+<div id="resultsContainer"></div>
+<div id="match-container"></div>
+<div id="spinner" class="spinner" style="display: none;"></div>
+<script src="/script/office_page.js"></script>
+</body>
+</html>
