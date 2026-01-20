@@ -2,12 +2,12 @@ async function fetchUsers() {
     const spinner = document.getElementById('spinner');
     spinner.style.display = 'block';
     try {
-        const response = await fetch('/user/users');
+        const response = await fetch('/api/v0/statistic/general');
         if (!response.ok) {
             throw new Error('Помилка при отриманні користувачів');
         }
         const users = await response.json();
-        displayUsers(users[0]);
+        displayUsers(users);
     } catch (error) {
         console.error('Помилка:', error);
     } finally {
@@ -23,13 +23,11 @@ function displayUsers(users) {
     table.innerHTML = `
         <thead>
             <tr>
-                <th>Місце у рейтингу</th>
-                <th>Ім'я користувача</th>
-                <th>Загальний рахунок</th>
-                <th>Місячний рахунок</th>
-                <th>Кількість трофеїв</th>
-                <th>Кількість прогнозів</th>
-                <th>% вгаданих матчів</th>
+                <th>Ranking position</th>
+                <th>Username</th>
+                <th>Correct predictions</th>
+                <th>Predictions count</th>
+                <th>Accuracy (%)</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -46,8 +44,6 @@ function displayUsers(users) {
             <td>${user.rankingPosition}</td>
             <td>${user.userName}</td>
             <td>${user.totalScore}</td>
-            <td>${user.monthlyScore}</td>
-            <td>${user.trophyCount}</td>
             <td>${user.predictionCount}</td>
             <td>${user.percentGuessedMatches}%</td>
         `;

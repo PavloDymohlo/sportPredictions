@@ -18,6 +18,7 @@ public class CompetitionService {
 
     private final CompetitionRepository competitionRepository;
     private final UserCompetitionRepository userCompetitionRepository;
+
     public List<Competition> findAll() {
         return competitionRepository.findAll();
     }
@@ -27,12 +28,13 @@ public class CompetitionService {
     }
 
     @Transactional
-    public Competition findOrCreate(String country, String name) {
+    public Competition findOrCreate(String country, String name, String code) {
         return competitionRepository.findByCountryAndName(country, name)
                 .orElseGet(() -> {
                     Competition newCompetition = Competition.builder()
                             .country(country)
                             .name(name)
+                            .code(code)
                             .build();
                     return competitionRepository.save(newCompetition);
                 });
@@ -57,5 +59,4 @@ public class CompetitionService {
         }
         return false;
     }
-
 }

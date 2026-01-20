@@ -21,10 +21,6 @@ public class User {
     private String userName;
     @Column(name = "ranking_position")
     private long rankingPosition;
-    @Column(name = "trophy_count")
-    private long trophyCount;
-    @Column(name = "monthly_score")
-    private long monthlyScore;
     @Column(name = "total_score")
     private long totalScore;
     @Column(name = "prediction_count")

@@ -16,7 +16,7 @@ import ua.dymohlo.sportPredictions.service.AuthService;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v0/auth")
 public class AuthController {
     private final AuthService authService;
 

@@ -11,8 +11,14 @@
 <div class="container">
     <h2>Registration</h2>
     <form id="registrationForm" action="/register" method="post">
-        <label for="register-login">Login:</label>
-        <input placeholder="Enter your username" type="text" id="register-login" name="login" required
+        <label for="register-login">Login (English letters only):</label>
+        <input placeholder="Enter your username"
+               type="text"
+               id="register-login"
+               name="login"
+               required
+               pattern="[A-Za-z0-9_ ]+"
+               title="Username must contain only English letters, numbers, or underscore"
                autocomplete="username">
         <label for="register-password">Password:</label>
         <input placeholder="Enter password" type="password" id="register-password" name="password" required

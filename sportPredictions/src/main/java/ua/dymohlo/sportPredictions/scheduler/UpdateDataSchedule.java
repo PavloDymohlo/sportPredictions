@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ua.dymohlo.sportPredictions.component.ApiDataParser;
+import ua.dymohlo.sportPredictions.service.PredictionService;
 
 
 @Component
@@ -12,43 +13,28 @@ import ua.dymohlo.sportPredictions.component.ApiDataParser;
 @Slf4j
 public class UpdateDataSchedule {
     private final ApiDataParser apiDataParser;
-//    private final UserRankingService userRankingService;
-//    private final PredictionService predictionService;
-//    private final MatchServiceImpl matchServiceImpl;
+    private final PredictionService predictionService;
 
-
-    @Scheduled(cron = "0 31 19 * * *", zone = "Europe/Kiev")
-    public void getApiInfo() {
+    @Scheduled(cron = "00 53 11 * * *", zone = "Europe/Kiev")
+    public void getCompetitionFromApi() {
         log.info("call footballApiService");
         apiDataParser.parseCompetitionsData();
     }
 
-//    @Scheduled(cron = "0 21 09 * * *", zone = "Europe/Kiev")
-//    public void getFutureMatches() {
-//        matchServiceImpl.getFutureMatches();
-//    }
-//
-//    @Scheduled(cron = "0 52 08 * * *", zone = "Europe/Kiev")
-//    public void getMatchesResultFromApi() {
-//        matchServiceImpl.getMatchesResultFromApi();
-//    }
-//
-//    @Scheduled(cron = "0 02 07 * * *", zone = "Europe/Kiev")
-//    public void countUsersPredictionsResult() {
-//        predictionService.countAllUsersPredictionsResult();
-//    }
-//    @Scheduled(cron = "0 03 07 * * *", zone = "Europe/Kiev")
-//    public void rankingPosition() {
-//        userRankingService.updateRankingPositions();
-//    }
-//
-//    @Scheduled(cron = "0 04 07 1 * ?", zone = "Europe/Kiev")
-//    public void userTrophyCount() {
-//        userRankingService.updateTrophyCounts();
-//    }
-//
-//    @Scheduled(cron = "0 05 07 * * *", zone = "Europe/Kiev")
-//    public void findPassiveUser() {
-//        userRankingService.removeInactiveUsers();
-//    }
+    @Scheduled(cron = "30 53 11 * * *", zone = "Europe/Kiev")
+    public void getPastMatches() {
+        log.info("call footballApiService");
+        apiDataParser.parseAndCachePastMatches();
+    }
+
+    @Scheduled(cron = "0 57 11 * * *", zone = "Europe/Kiev")
+    public void getFutureMatches() {
+        log.info("call footballApiService");
+        apiDataParser.parseAndCacheFutureMatches();
+    }
+
+    @Scheduled(cron = "0 00 12 * * *", zone = "Europe/Kiev")
+    public void countUsersPredictionsResult() {
+        predictionService.countAllUsersPredictionsResult();
+    }
 }

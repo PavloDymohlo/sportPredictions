@@ -20,6 +20,30 @@
     </div>
     <button onclick="showStatistics()">Statistic</button>
     <button onclick="showRules()">Rules</button>
+    <button onclick="toggleMyGroups()">My groups</button>
+
+    <!-- My Groups Dropdown Container -->
+    <div class="my-groups-container" id="my-groups-container" style="display: none;">
+        <!-- Search Section -->
+        <div class="group-search-section">
+            <input
+                    type="text"
+                    id="group-search-input"
+                    class="group-search-input"
+                    placeholder="Enter group name"
+                    autocomplete="off"
+            />
+            <button id="group-search-btn" class="group-search-btn" style="display: none;">Search</button>
+        </div>
+
+        <!-- Search Result -->
+        <div class="group-search-result" id="group-search-result" style="display: none;"></div>
+
+        <!-- My Groups List -->
+        <div class="my-groups-header">My Groups:</div>
+        <div class="my-groups-list" id="my-groups-list"></div>
+    </div>
+
     <div id="competitions-list" class="competitions-wrapper"></div>
 </div>
 <div id="user-name"></div>

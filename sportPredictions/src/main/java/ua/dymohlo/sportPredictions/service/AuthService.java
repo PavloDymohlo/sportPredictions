@@ -22,20 +22,16 @@ public class AuthService {
     public User register(RegisterRequest request) {
         String userName = request.getUserName();
         if (userRepository.findByUserName(userName).isPresent()) {
-            log.error("user with userName " + userName + " already exists!");
             throw new IllegalArgumentException("This username already exists!");
         }
         long startCount = 0;
         long userRankingPosition = calculateUserRankingPositionDuringRegistration();
-        //checkUserNameInLatin(userName);
         String passwordEncoded = PasswordEncoderConfig.encoderPassword(request.getPassword());
 
         User user = User.builder()
                 .userName(userName)
                 .password(passwordEncoded)
                 .rankingPosition(userRankingPosition)
-                .trophyCount(startCount)
-                .monthlyScore(startCount)
                 .totalScore(startCount)
                 .predictionCount(startCount)
                 .percentGuessedMatches((int) startCount)
@@ -58,13 +54,6 @@ public class AuthService {
 
         return "Success";
     }
-
-    private void checkUserNameInLatin(String userName) {
-        if (userName.chars().anyMatch(ch -> Character.UnicodeBlock.of(ch).equals(Character.UnicodeBlock.CYRILLIC))) {
-            throw new IllegalArgumentException("Введіть псевдонім латинськими символами!");
-        }
-    }
-
     private long calculateUserRankingPositionDuringRegistration() {
         return userRepository.count() + 1;
     }
