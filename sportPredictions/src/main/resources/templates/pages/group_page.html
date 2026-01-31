@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${group.userGroupName}">Group Page</title>
+  <link rel="stylesheet" type="text/css" href="/css/group_page.css"/>
+  <link rel="icon" href="/ico/favicon.ico" type="image/x-icon">
+</head>
+<body>
+<div class="header-container">
+  <button class="back-button" onclick="goBack()">← Back</button>
+  <div class="group-info-section">
+    <div class="group-info-header">
+      <span>Group: <strong th:text="${group.userGroupName}">Group Name</strong></span>
+      <span class="separator">|</span>
+      <span>Leader: <strong th:text="${group.userGroupLeaderName}">Leader Name</strong></span>
+    </div>
+    <div id="competition-period" class="competition-period-inline" style="display: none;">
+      <span class="period-icon">📅</span>
+      <span id="period-text">Competition period: not set</span>
+    </div>
+  </div>
+</div>
+
+<div id="join-requests-panel" class="join-requests-panel" style="display: none;">
+  <div class="panel-header-requests">Join Requests (Leader Only)</div>
+  <div id="join-requests-list" class="join-requests-list">
+  </div>
+</div>
+
+<div id="leader-panel" class="leader-panel" style="display: none;">
+  <div class="panel-header">Group Settings (Leader Only)</div>
+  <div class="leader-controls">
+    <div class="date-controls">
+      <div class="date-field">
+        <label for="start-date">Start Date:</label>
+        <input type="date" id="start-date" class="date-input">
+      </div>
+      <div class="date-field">
+        <label for="end-date">End Date:</label>
+        <input type="date" id="end-date" class="date-input">
+      </div>
+    </div>
+
+    <div class="competitions-selector">
+      <button class="dropdown-button" onclick="toggleCompetitionsDropdown()">
+        Select Competitions ▼
+      </button>
+      <div id="competitions-dropdown" class="dropdown-content">
+        <div class="dropdown-search">
+          <input type="text" id="competition-search" placeholder="Search competitions..."
+                 onkeyup="filterCompetitions()">
+        </div>
+        <div id="competitions-list-dropdown" class="competitions-list-dropdown">
+          <p class="loading-text">Loading competitions...</p>
+        </div>
+        <div class="dropdown-footer">
+          <span id="selected-count">0 selected</span>
+          <button class="create-button" onclick="createGroupCompetitions()">Create</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main-container">
+
+  <div class="left-panel">
+    <div class="panel-header">Competitions</div>
+    <div id="competitions-list" class="competitions-content">
+      <p class="placeholder-text">No competitions yet</p>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="panel-header">Group Members</div>
+    <div id="members-statistics" class="members-content">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Ranking position</th>
+          <th>Username</th>
+          <th>Correct predictions</th>
+          <th>Predictions count</th>
+          <th>Accuracy (%)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td colspan="5" class="placeholder-text">No members data yet</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="spinner" class="spinner" style="display: none;"></div>
+<script src="/script/group_page.js"></script>
+</body>
+</html>

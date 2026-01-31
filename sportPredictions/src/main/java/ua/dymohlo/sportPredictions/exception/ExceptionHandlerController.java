@@ -39,6 +39,7 @@ public class ExceptionHandlerController {
     public ResponseEntity<String> handleNullPointerException(NullPointerException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody

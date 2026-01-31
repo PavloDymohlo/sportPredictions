@@ -14,9 +14,14 @@ import java.util.Optional;
 public interface UserCompetitionRepository extends JpaRepository<UserCompetition, Long> {
     @Query("SELECT uc FROM UserCompetition uc JOIN FETCH uc.competition WHERE uc.user = :user")
     List<UserCompetition> findByUser(User user);
+
     List<UserCompetition> findByCompetition(Competition competition);
+
     Optional<UserCompetition> findByUserAndCompetition(User user, Competition competition);
+
     boolean existsByUserAndCompetition(User user, Competition competition);
+
     long countByCompetition(Competition competition);
+
     void deleteByUserAndCompetition(User user, Competition competition);
 }

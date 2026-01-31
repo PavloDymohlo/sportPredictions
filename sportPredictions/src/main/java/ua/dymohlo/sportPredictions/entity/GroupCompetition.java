@@ -4,23 +4,23 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Builder
 @ToString
-@AllArgsConstructor
-@NoArgsConstructor
-@Table(name = "user_competitions",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "competition_id"}))
-public class UserCompetition {
+@Table(name = "group_competitions",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"group_id", "competition_id"}))
+public class GroupCompetition {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "group_id", nullable = false)
+    private UserGroup userGroup;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "competition_id", nullable = false)

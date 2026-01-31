@@ -9,6 +9,7 @@ import ua.dymohlo.sportPredictions.dto.response.UserRankingResponse;
 import ua.dymohlo.sportPredictions.service.UserRankingService;
 
 import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -20,5 +21,4 @@ public class StatisticController {
     public List<UserRankingResponse> allUsersList() {
         return userRankingService.getAllUsers();
     }
-
 }

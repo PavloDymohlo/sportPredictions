@@ -81,10 +81,6 @@ public class UserCompetitionService {
 
     @Transactional
     public void updateUserCompetitions(UserCompetitionListRequest request) {
-        System.out.println("=== REQUEST DATA ===");
-        System.out.println("Username: " + request.getUserName());
-        System.out.println("Competitions: " + request.getCompetitions());
-
         User user = userRepository.findByUserName(request.getUserName())
                 .orElseThrow(() -> new RuntimeException("User not found: " + request.getUserName()));
 
@@ -93,7 +89,6 @@ public class UserCompetitionService {
             if (obj instanceof Map) {
                 @SuppressWarnings("unchecked")
                 Map<String, String> compMap = (Map<String, String>) obj;
-                System.out.println("Competition map: " + compMap);
                 competitionsList.add(compMap);
             }
         }
@@ -102,53 +97,35 @@ public class UserCompetitionService {
                 .map(UserCompetition::getCompetition)
                 .collect(Collectors.toList());
 
-        System.out.println("Current competitions count: " + currentCompetitions.size());
-
         List<Competition> newCompetitions = new ArrayList<>();
         for (Map<String, String> compMap : competitionsList) {
             String country = compMap.get("country");
             String name = compMap.get("name");
             String code = compMap.get("code");
 
-            System.out.println("Processing: country=" + country + ", name=" + name + ", code=" + code);
-
             if (country != null && name != null && code != null) {
                 Competition comp = competitionService.findOrCreate(country, name, code);
-                System.out.println("Competition found/created: " + comp);
                 newCompetitions.add(comp);
 
                 if (!currentCompetitions.contains(comp)) {
-                    System.out.println("Adding new competition to user");
                     UserCompetition userComp = UserCompetition.builder()
                             .user(user)
                             .competition(comp)
                             .build();
-                    UserCompetition saved = userCompetitionRepository.save(userComp);
-                    System.out.println("Saved UserCompetition: " + saved);
-                } else {
-                    System.out.println("Competition already exists for user");
+                    userCompetitionRepository.save(userComp);
+
                 }
-            } else {
-                System.out.println("Skipping competition - missing data");
             }
         }
 
-        System.out.println("New competitions count: " + newCompetitions.size());
-
         for (Competition oldComp : currentCompetitions) {
             if (!newCompetitions.contains(oldComp)) {
-                System.out.println("Removing old competition: " + oldComp);
                 userCompetitionRepository.deleteByUserAndCompetition(user, oldComp);
 
                 if (!competitionService.isCompetitionInUse(oldComp.getId())) {
-                    System.out.println("Deleting unused competition: " + oldComp);
                     competitionRepository.delete(oldComp);
                 }
             }
         }
-
-        System.out.println("=== END UPDATE ===");
     }
 }
-
-

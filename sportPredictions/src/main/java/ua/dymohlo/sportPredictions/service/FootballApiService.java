@@ -33,8 +33,6 @@ public class FootballApiService {
     private final CompetitionRepository competitionRepository;
     private final RestTemplate restTemplate = new RestTemplate();
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-  //  private static final String MATCHES_CACHE_KEY_PREFIX = "matches:";
-
 
     public ResponseEntity<String> getCompetitions() {
         log.info("Fetching competitions from Football API");
@@ -134,7 +132,4 @@ public class FootballApiService {
         log.info("Fetched matches from {} competitions", allMatchesResponses.size());
         return ResponseEntity.ok(allMatchesResponses);
     }
-
-
 }
-

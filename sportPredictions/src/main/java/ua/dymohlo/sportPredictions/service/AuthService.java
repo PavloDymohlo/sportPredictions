@@ -54,6 +54,7 @@ public class AuthService {
 
         return "Success";
     }
+
     private long calculateUserRankingPositionDuringRegistration() {
         return userRepository.count() + 1;
     }

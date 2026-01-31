@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateUserGroup {
+public class CreateUserGroupRequest {
     private String userGroupName;
     private String userGroupLeaderName;
 }

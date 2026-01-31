@@ -28,32 +28,11 @@ public class CompetitionController {
         return Collections.singletonList(apiDataParser.getCompetitionsDataFromCache());
     }
 
-//    @PostMapping("/save-user-competitions")
-//    public ResponseEntity<String> saveUserCompetitions(@RequestBody UserCompetitionListRequest request) {
-//        try {
-//            userCompetitionService.updateUserCompetitions(request);
-//            return ResponseEntity.ok("Competitions list saved successfully");
-//        } catch (Exception e) {
-//            log.error("Error saving user competitions list", e);
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
-
     @PostMapping("/save-user-competitions")
     public ResponseEntity<String> saveUserCompetitions(@RequestBody UserCompetitionListRequest request) {
         userCompetitionService.updateUserCompetitions(request);
         return ResponseEntity.ok("Competitions list saved successfully");
     }
-
-//    @GetMapping("/user-competitions/{username}")
-//    public ResponseEntity<?> getUserCompetitions(@PathVariable String username) {
-//        try {
-//            List<Competition> competitions = userCompetitionService.getUserCompetitions(username);
-//            return ResponseEntity.ok(competitions);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(500).body("Error: " + e.getMessage());
-//        }
-//    }
 
     @GetMapping("/user-competitions/{username}")
     public ResponseEntity<?> getUserCompetitions(@PathVariable String username) {

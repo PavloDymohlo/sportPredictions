@@ -106,7 +106,7 @@ public class PredictionService {
 
         log.info("✅ Prepared {} tournaments with {} total matches", result.size(),
                 result.stream().filter(t -> t instanceof Map)
-                        .mapToInt(t -> ((List)((Map)t).get("matches")).size()).sum());
+                        .mapToInt(t -> ((List) ((Map) t).get("matches")).size()).sum());
         return result;
     }
 

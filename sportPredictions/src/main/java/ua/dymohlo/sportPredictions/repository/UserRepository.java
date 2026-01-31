@@ -11,11 +11,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserName(String userName);
 
     long count();
+
     @Query("""
-    SELECT u FROM User u
-    ORDER BY 
-        u.totalScore DESC,
-        u.percentGuessedMatches DESC,
-        u.predictionCount DESC """)
+            SELECT u FROM User u
+            ORDER BY 
+                u.totalScore DESC,
+                u.percentGuessedMatches DESC,
+                u.predictionCount DESC """)
     List<User> findAllRanked();
 }

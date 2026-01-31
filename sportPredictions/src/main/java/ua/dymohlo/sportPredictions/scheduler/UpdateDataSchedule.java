@@ -15,25 +15,25 @@ public class UpdateDataSchedule {
     private final ApiDataParser apiDataParser;
     private final PredictionService predictionService;
 
-    @Scheduled(cron = "00 53 11 * * *", zone = "Europe/Kiev")
+    @Scheduled(cron = "00 14 12 * * *", zone = "Europe/Kiev")
     public void getCompetitionFromApi() {
         log.info("call footballApiService");
         apiDataParser.parseCompetitionsData();
     }
 
-    @Scheduled(cron = "30 53 11 * * *", zone = "Europe/Kiev")
+    @Scheduled(cron = "30 14 12 * * *", zone = "Europe/Kiev")
     public void getPastMatches() {
         log.info("call footballApiService");
         apiDataParser.parseAndCachePastMatches();
     }
 
-    @Scheduled(cron = "0 57 11 * * *", zone = "Europe/Kiev")
+    @Scheduled(cron = "0 17 12 * * *", zone = "Europe/Kiev")
     public void getFutureMatches() {
         log.info("call footballApiService");
         apiDataParser.parseAndCacheFutureMatches();
     }
 
-    @Scheduled(cron = "0 00 12 * * *", zone = "Europe/Kiev")
+    @Scheduled(cron = "0 19 12 * * *", zone = "Europe/Kiev")
     public void countUsersPredictionsResult() {
         predictionService.countAllUsersPredictionsResult();
     }

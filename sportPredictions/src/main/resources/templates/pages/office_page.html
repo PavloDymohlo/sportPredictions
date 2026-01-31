@@ -22,9 +22,7 @@
     <button onclick="showRules()">Rules</button>
     <button onclick="toggleMyGroups()">My groups</button>
 
-    <!-- My Groups Dropdown Container -->
     <div class="my-groups-container" id="my-groups-container" style="display: none;">
-        <!-- Search Section -->
         <div class="group-search-section">
             <input
                     type="text"
@@ -35,11 +33,21 @@
             />
             <button id="group-search-btn" class="group-search-btn" style="display: none;">Search</button>
         </div>
+        <button class="create-group-btn" onclick="toggleCreateGroup()">Create group</button>
 
-        <!-- Search Result -->
+        <div id="create-group-container" style="display:none;">
+            <input
+                    type="text"
+                    id="create-group-input"
+                    placeholder="Enter group name"
+                    autocomplete="off"
+            />
+            <button onclick="createGroup()">Create</button>
+            <div id="create-group-result"></div>
+        </div>
+
         <div class="group-search-result" id="group-search-result" style="display: none;"></div>
 
-        <!-- My Groups List -->
         <div class="my-groups-header">My Groups:</div>
         <div class="my-groups-list" id="my-groups-list"></div>
     </div>

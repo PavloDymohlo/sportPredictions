@@ -46,7 +46,6 @@ async function toggleMyGroups() {
         groupsContainer.style.display = 'none';
     }
 }
-
 async function loadUserGroups() {
     const groupsList = document.getElementById('my-groups-list');
     const userName = localStorage.getItem('userName');
@@ -82,6 +81,10 @@ async function loadUserGroups() {
                 const groupItem = document.createElement('div');
                 groupItem.className = 'group-item';
                 groupItem.textContent = group.userGroupName;
+
+                groupItem.onclick = () => openGroup(group.userGroupName);
+                groupItem.style.cursor = 'pointer';
+
                 groupsList.appendChild(groupItem);
             });
         }
@@ -167,11 +170,109 @@ async function searchGroup() {
     }
 }
 
-function applyToGroup(groupName) {
+async function applyToGroup(groupName) {
     console.log('Applying to group:', groupName);
-    // TODO: Implement join group logic when you have the endpoint
-    alert(`Application to join "${groupName}" will be implemented soon!`);
+
+    const userName = localStorage.getItem('userName');
+
+    if (!userName) {
+        alert('User not found. Please log in again.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/v0/user-group/join-request', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                groupName: groupName,
+                userName: userName
+            })
+        });
+
+        if (response.ok) {
+            const message = await response.text();
+            alert('Success! Your request has been sent to the group leader.');
+            console.log('Join request sent:', message);
+        } else {
+            const error = await response.text();
+            alert('Error: ' + error);
+            console.error('Error sending join request:', error);
+        }
+    } catch (error) {
+        console.error('Error applying to group:', error);
+        alert('Failed to send request. Please try again.');
+    }
 }
+
+function toggleCreateGroup() {
+    const container = document.getElementById('create-group-container');
+    container.style.display = container.style.display === 'none' ? 'block' : 'none';
+}
+
+async function createGroup() {
+    const input = document.getElementById('create-group-input');
+    const result = document.getElementById('create-group-result');
+
+    const groupName = input.value.trim();
+    const userName = localStorage.getItem('userName');
+
+    if (!groupName || !userName) return;
+
+    result.textContent = 'Creating...';
+    result.style.color = 'black';
+
+    try {
+        const response = await fetch('/api/v0/user-group/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userGroupName: groupName,
+                userGroupLeaderName: userName
+            })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            result.textContent = errorText || 'Group already exists';
+            result.style.color = 'red';
+            return;
+        }
+
+        const createdGroup = await response.json();
+
+        result.textContent = 'Group created successfully';
+        result.style.color = 'green';
+
+        addGroupToList(createdGroup.userGroupName);
+
+        input.value = '';
+
+    } catch (e) {
+        result.textContent = 'Failed to create group';
+        result.style.color = 'red';
+    }
+}
+
+function openGroup(groupName) {
+    window.location.href = `/group/${groupName}`;
+}
+
+function addGroupToList(groupName) {
+    const groupsList = document.getElementById('my-groups-list');
+
+    const groupItem = document.createElement('div');
+    groupItem.className = 'group-item';
+    groupItem.textContent = groupName;
+
+    groupItem.onclick = () => openGroup(groupName);
+    groupItem.style.cursor = 'pointer';
+
+    groupsList.appendChild(groupItem);
+}
+
 
 async function getUserName() {
     const spinner = document.getElementById('spinner');

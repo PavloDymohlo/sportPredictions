@@ -24,9 +24,7 @@
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="937ba995-5c52-4651-bd55-27bc5219300a" object-ref="schemas/public/tables/users" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="937ba995-5c52-4651-bd55-27bc5219300a" />
@@ -35,7 +33,10 @@
     <filter-actions connection-id="937ba995-5c52-4651-bd55-27bc5219300a" dataset="public.users" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="937ba995-5c52-4651-bd55-27bc5219300a" dataset="public.user_groups" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="937ba995-5c52-4651-bd55-27bc5219300a" dataset="public.user_competitions" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="937ba995-5c52-4651-bd55-27bc5219300a" dataset="public.group_competitions" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="937ba995-5c52-4651-bd55-27bc5219300a" dataset="public.competitions" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="937ba995-5c52-4651-bd55-27bc5219300a" dataset="public.user_group_members" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="937ba995-5c52-4651-bd55-27bc5219300a" dataset="public.group_join_requests" active-filter-id="EMPTY_FILTER" />
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />

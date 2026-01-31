@@ -3,15 +3,15 @@ package ua.dymohlo.sportPredictions.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString(exclude = {"users", "competitions"})
 @Table(name = "user_groups", uniqueConstraints = @UniqueConstraint(columnNames = "group_name"))
 public class UserGroup {
@@ -44,8 +44,8 @@ public class UserGroup {
     private List<Competition> competitions;
 
     @Column(name = "start_date")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @Column(name = "finish_date")
-    private LocalDateTime finishDate;
+    private LocalDate finishDate;
 }
