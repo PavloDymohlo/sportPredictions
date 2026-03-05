@@ -5,13 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MatchStatusResponse {
-    private List<String> match;
-    private boolean isPredictedCorrectly;
+public class GroupRankingResponse {
+    private long rankingPosition;
+    private String userName;
+    private long correctPredictions;
+    private long predictionCount;
+    private int accuracyPercent;
 }

@@ -1,10 +1,13 @@
-package ua.dymohlo.sportPredictions.configuration;
+package ua.dymohlo.sportPredictions.util;
 
 import org.mindrot.jbcrypt.BCrypt;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
 public class PasswordEncoderConfig {
+
+    private PasswordEncoderConfig() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
 
     public static String encoderPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt());

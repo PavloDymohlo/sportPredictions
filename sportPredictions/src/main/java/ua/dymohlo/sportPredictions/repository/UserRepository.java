@@ -10,13 +10,15 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserName(String userName);
 
-    long count();
+    Optional<User> findByTelegramChatId(Long telegramChatId);
+
+    java.util.List<User> findAllByTelegramChatIdNotNull();
 
     @Query("""
             SELECT u FROM User u
-            ORDER BY 
+            ORDER BY
                 u.totalScore DESC,
                 u.percentGuessedMatches DESC,
-                u.predictionCount DESC """)
+                u.predictionCount DESC""")
     List<User> findAllRanked();
 }

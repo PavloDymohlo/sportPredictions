@@ -3,59 +3,66 @@ package ua.dymohlo.sportPredictions.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ua.dymohlo.sportPredictions.configuration.PasswordEncoderConfig;
+import org.springframework.transaction.annotation.Transactional;
+
 import ua.dymohlo.sportPredictions.dto.request.LoginInRequest;
 import ua.dymohlo.sportPredictions.dto.request.RegisterRequest;
+import ua.dymohlo.sportPredictions.dto.response.AuthResponse;
 import ua.dymohlo.sportPredictions.entity.User;
 import ua.dymohlo.sportPredictions.repository.UserRepository;
+import ua.dymohlo.sportPredictions.secutity.JwtUtils;
+import ua.dymohlo.sportPredictions.util.PasswordEncoderConfig;
 
-import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
+    private final JwtUtils jwtUtils;
 
-    public User register(RegisterRequest request) {
+    @Transactional
+    public AuthResponse register(RegisterRequest request) {
         String userName = request.getUserName();
         if (userRepository.findByUserName(userName).isPresent()) {
             throw new IllegalArgumentException("This username already exists!");
         }
-        long startCount = 0;
-        long userRankingPosition = calculateUserRankingPositionDuringRegistration();
         String passwordEncoded = PasswordEncoderConfig.encoderPassword(request.getPassword());
 
         User user = User.builder()
                 .userName(userName)
                 .password(passwordEncoded)
-                .rankingPosition(userRankingPosition)
-                .totalScore(startCount)
-                .predictionCount(startCount)
-                .percentGuessedMatches((int) startCount)
-                .lastPredictions(LocalDateTime.now())
+                .rankingPosition(nextRankingPosition())
+                .totalScore(0)
+                .predictionCount(0)
+                .percentGuessedMatches(0)
+                .lastPredictions(null)
                 .build();
 
-        return userRepository.save(user);
+        User saved = userRepository.save(user);
+        return toAuthResponse(saved);
     }
 
-    public String loginIn(LoginInRequest request) {
-        Optional<User> user = userRepository.findByUserName(request.getUserName());
+    public AuthResponse loginIn(LoginInRequest request) {
+        User user = userRepository.findByUserName(request.getUserName())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
 
-        if (user.isEmpty()) {
-            throw new NoSuchElementException("invalid login");
+        if (!PasswordEncoderConfig.checkPassword(request.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Invalid username or password");
         }
 
-        if (!PasswordEncoderConfig.checkPassword(request.getPassword(), user.get().getPassword())) {
-            throw new IllegalArgumentException("Invalid password");
-        }
-
-        return "Success";
+        return toAuthResponse(user);
     }
 
-    private long calculateUserRankingPositionDuringRegistration() {
+    private AuthResponse toAuthResponse(User user) {
+        return AuthResponse.builder()
+                .userName(user.getUserName())
+                .language(user.getLanguage())
+                .token(jwtUtils.generateToken(user.getUserName()))
+                .build();
+    }
+
+    private long nextRankingPosition() {
         return userRepository.count() + 1;
     }
 }

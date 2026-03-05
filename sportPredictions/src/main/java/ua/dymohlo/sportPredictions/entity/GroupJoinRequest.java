@@ -2,6 +2,7 @@ package ua.dymohlo.sportPredictions.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ua.dymohlo.sportPredictions.enums.RequestStatus;
 
 import java.time.LocalDateTime;
 
@@ -9,7 +10,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "group_join_requests",
@@ -50,11 +50,5 @@ public class GroupJoinRequest {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
-    }
-
-    public enum RequestStatus {
-        PENDING,
-        APPROVED,
-        REJECTED
     }
 }

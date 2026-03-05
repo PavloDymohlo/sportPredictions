@@ -1,11 +1,7 @@
 body {
     font-family: 'Roboto', sans-serif;
-    line-height: 1.6;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     background-image: url("/images/background.png");
     background-size: cover;
     background-position: center;
@@ -13,160 +9,153 @@ body {
     background-attachment: fixed;
 }
 
-.rules-container {
-    width: calc(100% - 40px);
-    max-width: 800px;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: 20px;
+.rules-header {
+    max-width: 900px;
+    margin: 20px auto 0;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-h1, h2 {
+.lang-switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lang-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.2s ease;
+}
+
+.lang-btn .fi {
+    display: block;
+    border-radius: 3px;
+    transition: width 0.2s ease, height 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+}
+
+.lang-btn.active .fi {
+    width: 40px;
+    height: 28px;
+    opacity: 1;
+}
+
+.lang-btn.inactive .fi {
+    width: 26px;
+    height: 18px;
+    opacity: 0.55;
+}
+
+.lang-btn.inactive:hover .fi {
+    opacity: 0.85;
+}
+
+.back-button {
+    background-color: #42C2DF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.back-button:hover {
+    background-color: #3594A9;
+}
+
+.rules-container {
+    max-width: 900px;
+    margin: 16px auto 30px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 25px 30px;
+}
+
+.rules-container h1 {
+    background-color: #42C2DF;
+    color: white;
+    margin: -25px -30px 25px;
+    padding: 20px 30px;
+    font-size: 22px;
+    font-weight: bold;
     text-align: center;
 }
 
-ul {
-    list-style-type: disc;
-    padding-left: 20px;
+.rules-container h2 {
+    color: #333;
+    font-size: 18px;
+    margin-top: 25px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(66, 194, 223, 0.4);
 }
 
-p, ul {
-    margin-bottom: 15px;
+.rules-container p {
+    color: #444;
+    line-height: 1.7;
+    margin-bottom: 12px;
     text-align: justify;
 }
 
-.burger-menu {
-    position: fixed;
-    top: 30px;
-    right: 30px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    width: 40px;
-    height: 30px;
+.rules-container ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    color: #444;
+    line-height: 1.7;
+    margin-bottom: 12px;
 }
 
-.bar {
-    height: 5px;
-    width: 100%;
-    background: linear-gradient(to bottom, #0057b8 50%, #ffd100 50%);
-    opacity: 0.8;
+.rules-container ol {
+    padding-left: 22px;
+    color: #444;
+    line-height: 1.7;
+    margin-bottom: 12px;
 }
 
-.menu {
-    display: none;
-    position: fixed;
-    top: 40px;
-    right: 10px;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    z-index: 1000;
-    width: 200px;
-    padding: 5px;
+.rules-container li {
+    margin-bottom: 4px;
 }
 
-.menu button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    border: none;
-    background: none;
-    text-align: left;
-    font-size: 16px;
-    color: black;
-    margin: 5px 0;
+.rules-container .note {
+    background-color: rgba(66, 194, 223, 0.1);
+    border-left: 4px solid #42C2DF;
+    border-radius: 0 6px 6px 0;
+    padding: 10px 16px;
+    margin: 12px 0;
+    color: #444;
+    font-size: 14px;
+    line-height: 1.6;
 }
 
-.menu button:hover {
-    background-color: #f0f0f0;
-}
-
-.menu-header {
-    position: absolute;
-    top: 0;
-    right: 5px;
-}
-
-.close-button {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    color: black;
-}
-
-.menu-header .close-button {
-    display: none;
-}
-
-.menu.open .menu-header .close-button {
-    display: block;
-    background: rgba(255, 255, 255, 0.9);
-}
-
-@media (min-width: 600px) {
+@media screen and (max-width: 992px) {
     .rules-container {
-        width: 100%;
-        max-width: 900px;
-        margin: 20px auto;
-        border-radius: 10px;
+        margin: 12px 15px 20px;
+    }
+    .rules-header {
+        margin: 15px 15px 0;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .rules-container {
+        margin: 10px 10px 15px;
         padding: 20px;
     }
 
-    .burger-menu {
-        position: fixed;
-        top: 30px;
-        right: 30px;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        width: 80px;
-        height: 60px;
-    }
-
-    .bar {
-        height: 10px;
-        width: 100%;
-        background: linear-gradient(to bottom, #0057b8 50%, #ffd100 50%);
-        opacity: 0.8;
-    }
-
-    .menu {
-        display: none;
-        position: fixed;
-        top: 40px;
-        right: 50px;
-        background: rgba(255, 255, 255, 0.9);
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        z-index: 1000;
-        width: 400px;
-        padding: 5px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .menu button {
-        display: block;
-        width: 100%;
-        padding: 10px;
-        border: none;
-        background: none;
-        text-align: left;
-        font-size: 36px;
-        color: black;
-        margin: 5px 0;
-    }
-
-    .close-button {
-        background: none;
-        border: none;
-        font-size: 36px;
-        cursor: pointer;
-        color: black;
+    .rules-container h1 {
+        margin: -20px -20px 20px;
+        padding: 15px 20px;
+        font-size: 18px;
     }
 }

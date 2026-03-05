@@ -11,5 +11,4 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateUserGroupRequest {
     private String userGroupName;
-    private String userGroupLeaderName;
 }

@@ -11,7 +11,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MatchStatusResponse {
-    private List<String> match;
-    private boolean isPredictedCorrectly;
+public class TournamentWithStatusResponse {
+    private String country;
+    private String tournament;
+    private List<MatchStatusResponse> matches;
 }

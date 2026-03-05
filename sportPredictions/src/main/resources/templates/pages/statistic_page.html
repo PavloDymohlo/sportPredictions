@@ -2,24 +2,31 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Statistic Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics</title>
     <link rel="stylesheet" type="text/css" href="/css/statistic_page.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/css/flag-icons.min.css"/>
     <link rel="icon" href="/ico/favicon.ico" type="image/x-icon">
 </head>
 <body>
-<div class="burger-menu" id="burgerButton" onclick="toggleMenu()">
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-</div>
-<div class="menu" id="submenu">
-    <div class="menu-header">
-        <button class="close-button" onclick="toggleMenu()">✖</button>
+<div id="nav-bar">
+    <button class="nav-button" onclick="returnBack()" data-i18n="group.back_btn">&#x2190; Back</button>
+    <span id="nav-title" data-i18n="stats.global_title">Global Statistics</span>
+    <div class="lang-switcher">
+        <button class="lang-btn" id="lang-en" onclick="setLanguage('en')" title="English">
+            <span class="fi fi-gb"></span>
+        </button>
+        <button class="lang-btn" id="lang-uk" onclick="setLanguage('uk')" title="Українська">
+            <span class="fi fi-ua"></span>
+        </button>
     </div>
-    <button onclick="returnBack()">Повернутись</button>
 </div>
-<div id="users-statistic"></div>
+<div class="statistic-panel">
+    <div id="users-statistic"></div>
+</div>
 <div id="spinner" class="spinner" style="display: none;"></div>
+<script src="/script/i18n.js"></script>
+<script src="/script/cache.js"></script>
 <script src="/script/statistic_page.js"></script>
 </body>
 </html>

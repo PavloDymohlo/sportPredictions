@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dymohlo.sportPredictions.dto.request.UserCompetitionListRequest;
+import ua.dymohlo.sportPredictions.dto.response.CompetitionResponse;
 import ua.dymohlo.sportPredictions.entity.Competition;
 import ua.dymohlo.sportPredictions.entity.User;
 import ua.dymohlo.sportPredictions.entity.UserCompetition;
@@ -12,8 +13,11 @@ import ua.dymohlo.sportPredictions.repository.CompetitionRepository;
 import ua.dymohlo.sportPredictions.repository.UserCompetitionRepository;
 import ua.dymohlo.sportPredictions.repository.UserRepository;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -25,7 +29,8 @@ public class UserCompetitionService {
     private final CompetitionService competitionService;
     private final UserCompetitionRepository userCompetitionRepository;
 
-    public List<Competition> getUserCompetitions(String userName) {
+    @Transactional(readOnly = true)
+    public List<CompetitionResponse> getUserCompetitions(String userName) {
         log.info("🔍 Service: Looking for username: [{}]", userName);
 
         Optional<User> userOpt = userRepository.findByUserName(userName);
@@ -41,42 +46,16 @@ public class UserCompetitionService {
         log.info("✅ Found {} user competitions", userCompetitions.size());
 
         return userCompetitions.stream()
-                .map(UserCompetition::getCompetition)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public void addCompetitionToUser(String userName, String country, String name, String code) {
-        User user = userRepository.findByUserName(userName)
-                .orElseThrow(() -> new RuntimeException("User not found: " + userName));
-
-        Competition competition = competitionService.findOrCreate(country, name, code);
-
-        if (userCompetitionRepository.existsByUserAndCompetition(user, competition)) {
-            return;
-        }
-
-        UserCompetition userCompetition = UserCompetition.builder()
-                .user(user)
-                .competition(competition)
-                .build();
-
-        userCompetitionRepository.save(userCompetition);
-    }
-
-    @Transactional
-    public void removeCompetitionFromUser(String userName, long competitionId) {
-        User user = userRepository.findByUserName(userName)
-                .orElseThrow(() -> new RuntimeException("User not found: " + userName));
-
-        Competition competition = competitionRepository.findById(competitionId)
-                .orElseThrow(() -> new RuntimeException("Competition not found: " + competitionId));
-
-        userCompetitionRepository.deleteByUserAndCompetition(user, competition);
-
-        if (!competitionService.isCompetitionInUse(competitionId)) {
-            competitionRepository.delete(competition);
-        }
+                .map(uc -> {
+                    Competition c = uc.getCompetition();
+                    return CompetitionResponse.builder()
+                            .id(c.getId())
+                            .country(c.getCountry())
+                            .name(c.getName())
+                            .code(c.getCode())
+                            .build();
+                })
+                .toList();
     }
 
     @Transactional
@@ -84,18 +63,11 @@ public class UserCompetitionService {
         User user = userRepository.findByUserName(request.getUserName())
                 .orElseThrow(() -> new RuntimeException("User not found: " + request.getUserName()));
 
-        List<Map<String, String>> competitionsList = new ArrayList<>();
-        for (Object obj : request.getCompetitions()) {
-            if (obj instanceof Map) {
-                @SuppressWarnings("unchecked")
-                Map<String, String> compMap = (Map<String, String>) obj;
-                competitionsList.add(compMap);
-            }
-        }
+        List<Map<String, String>> competitionsList = request.getCompetitions();
 
         List<Competition> currentCompetitions = userCompetitionRepository.findByUser(user).stream()
                 .map(UserCompetition::getCompetition)
-                .collect(Collectors.toList());
+                .toList();
 
         List<Competition> newCompetitions = new ArrayList<>();
         for (Map<String, String> compMap : competitionsList) {
@@ -113,7 +85,6 @@ public class UserCompetitionService {
                             .competition(comp)
                             .build();
                     userCompetitionRepository.save(userComp);
-
                 }
             }
         }
@@ -122,7 +93,7 @@ public class UserCompetitionService {
             if (!newCompetitions.contains(oldComp)) {
                 userCompetitionRepository.deleteByUserAndCompetition(user, oldComp);
 
-                if (!competitionService.isCompetitionInUse(oldComp.getId())) {
+                if (competitionService.isCompetitionUnused(oldComp.getId())) {
                     competitionRepository.delete(oldComp);
                 }
             }

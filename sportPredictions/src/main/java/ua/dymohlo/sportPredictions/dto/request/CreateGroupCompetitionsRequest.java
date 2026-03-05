@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateGroupCompetitionsRequest implements Serializable {
     private String groupName;
-    private String leaderName;
     private LocalDate startDate;
     private LocalDate endDate;
     private List<String> competitions;

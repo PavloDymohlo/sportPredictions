@@ -4,14 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @Builder
-@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "group_competitions",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"group_id", "competition_id"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"tournament_id", "competition_id"}))
 public class GroupCompetition {
 
     @Id
@@ -19,8 +18,8 @@ public class GroupCompetition {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", nullable = false)
-    private UserGroup userGroup;
+    @JoinColumn(name = "tournament_id", nullable = false)
+    private GroupTournament groupTournament;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "competition_id", nullable = false)

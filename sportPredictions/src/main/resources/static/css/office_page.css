@@ -20,8 +20,9 @@ body {
 
 h2 {
     color: #333;
-    border-bottom: 2px solid #333;
-    padding-bottom: 0;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
     text-align: center;
 }
 
@@ -38,21 +39,111 @@ h4 {
 }
 
 .date-group {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     margin: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
-#user-name{
-    background: rgba(255, 255, 255, 0.9);
-    margin: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+.date-group h2 {
+    background-color: #42C2DF !important;
+    color: white !important;
+    padding: 12px 15px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    transition: background-color 0.3s !important;
+    cursor: pointer !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.date-group h2:hover {
+    background-color: #3594A9 !important;
+}
+
+.collapsible-content {
+    padding: 12px 15px !important;
+    border: none !important;
+    border-radius: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.menu-button {
+    background-color: #42C2DF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    flex-shrink: 0;
+    flex-grow: 0;
+    white-space: nowrap;
+    width: fit-content !important;
+    display: inline-block !important;
+    align-self: center;
+}
+
+.menu-button:hover {
+    background-color: #3594A9;
+}
+
+.tg-bot-btn {
+    background-color: #42C2DF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    flex-shrink: 0;
+    flex-grow: 0;
+    white-space: nowrap;
+    width: fit-content !important;
+    display: inline-block !important;
+    align-self: center;
+}
+
+.tg-bot-btn:hover {
+    background-color: #3594A9;
+}
+
+.tg-bot-btn.connected {
+    background-color: #42C2DF;
+    outline: 2px solid #4CAF50;
+}
+
+.tg-bot-btn.connected:hover {
+    background-color: #3594A9;
+}
+
+#user-name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    margin: 20px auto 10px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: calc(100% - 20px);
+    max-width: 580px;
+    box-sizing: border-box;
+    font-size: 17px;
+    font-weight: bold;
+    color: #333;
+    border-left: 4px solid #42C2DF;
+}
+
+#greeting-text {
+    flex: 1;
     text-align: center;
-    width: 550px;
 }
 
 .match {
@@ -128,6 +219,47 @@ button:hover {
     background-color: #3594A9;
 }
 
+.lang-switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 4px;
+}
+
+.lang-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.2s ease;
+}
+
+.lang-btn .fi {
+    display: block;
+    border-radius: 3px;
+    transition: width 0.2s ease, height 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+}
+
+.lang-btn.active .fi {
+    width: 40px;
+    height: 28px;
+    opacity: 1;
+}
+
+.lang-btn.inactive .fi {
+    width: 26px;
+    height: 18px;
+    opacity: 0.55;
+}
+
+.lang-btn.inactive:hover .fi {
+    opacity: 0.85;
+}
+
 .spinner {
     width: 200px;
     height: 200px;
@@ -164,63 +296,22 @@ button:hover {
     color: green;
 }
 
-.burger-menu {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    width: 45px;
-    height: 45px;
-    z-index: 1001;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 50%;
-    padding: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-}
-
-.burger-menu:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transform: scale(1.05);
-}
-
-.burger-menu.active {
-    opacity: 0;
-    visibility: hidden;
-    transform: scale(0.8);
-    transition: opacity 0.3s ease, visibility 0s 0.3s, transform 0.3s ease;
-}
-
-.bar {
-    height: 3px;
-    width: 100%;
-    background: linear-gradient(to right, #0057b8 0%, #ffd100 100%);
-    margin: 3px 0;
-    border-radius: 3px;
-    transition: 0.4s;
-}
-
 .menu {
     display: none;
+    flex-direction: column;
     position: fixed;
     top: 0;
-    left: -300px;
-    width: 270px;
+    left: -360px;
+    width: 330px;
     height: 100%;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 240, 240, 0.95) 100%);
     box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     transition: left 0.5s ease;
-    overflow-y: auto;
+    overflow: hidden;
     padding-top: 80px;
     border-radius: 0 15px 15px 0;
-}
-
-.menu.open {
-    left: 0;
+    box-sizing: border-box;
 }
 
 .menu button {
@@ -236,6 +327,7 @@ button:hover {
     border-radius: 8px;
     transition: all 0.3s ease;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
 }
 
 .menu button:hover {
@@ -399,11 +491,6 @@ button:hover {
     height: 10px;
 }
 
-.save-button-container {
-    padding: 0 15px 15px;
-    text-align: center;
-}
-
 .save-competitions-btn {
     background-color: #4CAF50;
     color: white;
@@ -446,7 +533,10 @@ button:hover {
     text-align: center;
     border-top: 1px solid #ddd;
     margin-top: 10px;
-    background-color: rgba(245, 245, 245, 0.5);
+    background-color: rgba(245, 245, 245, 0.95);
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
 }
 
 .save-competitions-btn {
@@ -490,10 +580,11 @@ button:hover {
 }
 
 .competitions-wrapper {
-    max-height: calc(100vh - 200px);
-    overflow-y: auto;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .competitions-wrapper::-webkit-scrollbar {
@@ -501,7 +592,8 @@ button:hover {
 }
 
 .competitions-items {
-    max-height: calc(100vh - 350px);
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
     padding: 10px 15px;
     -ms-overflow-style: none;
@@ -634,11 +726,13 @@ body::-webkit-scrollbar {
     margin: 10px auto;
     padding: 15px;
     width: 90%;
-    max-height: 300px;
+    max-height: 40vh;
     overflow-y: auto;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     -ms-overflow-style: none;
     scrollbar-width: none;
+    flex-shrink: 0;
+    box-sizing: border-box;
 }
 
 .my-groups-container::-webkit-scrollbar {
@@ -684,10 +778,6 @@ body::-webkit-scrollbar {
 }
 
 @media screen and (max-width: 800px) {
-    .burger-menu {
-        padding: 8px;
-    }
-
     .menu {
         width: 80%;
     }
@@ -698,13 +788,6 @@ body::-webkit-scrollbar {
     }
 
     #user-name {
-        background: rgba(255, 255, 255, 0.9);
-        width: 90%;
-        margin: 10px;
-        padding: 10px;
-        margin-top: 50px;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        text-align: center;
+        max-width: 95%;
     }
 }

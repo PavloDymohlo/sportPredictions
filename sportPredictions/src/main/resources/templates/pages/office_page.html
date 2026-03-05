@@ -5,22 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User's office</title>
     <link rel="stylesheet" type="text/css" href="/css/office_page.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/css/flag-icons.min.css"/>
     <link rel="icon" href="/ico/favicon.ico" type="image/x-icon">
 </head>
 <body>
 <div class="overlay" id="overlay"></div>
-<div class="burger-menu" id="burgerButton" onclick="toggleMenu()">
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
+<div id="user-name">
+    <button class="menu-button" onclick="toggleMenu()" data-i18n="menu.menu_btn">Menu</button>
+    <span id="greeting-text"></span>
+    <button class="menu-button" onclick="logout()" data-i18n="menu.exit_btn">Exit</button>
+    <button class="tg-bot-btn" id="tg-bot-btn" onclick="handleTelegramBtn()" data-i18n="tg.connect_btn">TG Bot</button>
+    <div class="lang-switcher">
+        <button class="lang-btn" id="lang-en" onclick="setLanguage('en')" title="English">
+            <span class="fi fi-gb"></span>
+        </button>
+        <button class="lang-btn" id="lang-uk" onclick="setLanguage('uk')" title="Українська">
+            <span class="fi fi-ua"></span>
+        </button>
+    </div>
 </div>
 <div class="menu" id="submenu">
     <div class="menu-header">
-        <button class="close-button" onclick="closeMenu()">✖</button>
+        <button class="close-button" onclick="closeMenu()">&#x2716;</button>
     </div>
-    <button onclick="showStatistics()">Statistic</button>
-    <button onclick="showRules()">Rules</button>
-    <button onclick="toggleMyGroups()">My groups</button>
+    <button onclick="showStatistics()" data-i18n="menu.global_stats">Global Statistic</button>
+    <button onclick="showRules()" data-i18n="menu.rules">Rules</button>
+    <button onclick="toggleMyGroups()" data-i18n="menu.my_groups">My groups</button>
 
     <div class="my-groups-container" id="my-groups-container" style="display: none;">
         <div class="group-search-section">
@@ -28,36 +38,40 @@
                     type="text"
                     id="group-search-input"
                     class="group-search-input"
+                    data-i18n="menu.group_search_placeholder"
                     placeholder="Enter group name"
                     autocomplete="off"
             />
-            <button id="group-search-btn" class="group-search-btn" style="display: none;">Search</button>
+            <button id="group-search-btn" class="group-search-btn" style="display: none;" data-i18n="menu.search_btn">Search</button>
         </div>
-        <button class="create-group-btn" onclick="toggleCreateGroup()">Create group</button>
+        <button class="create-group-btn" onclick="toggleCreateGroup()" data-i18n="menu.create_group_btn">Create group</button>
 
         <div id="create-group-container" style="display:none;">
             <input
                     type="text"
                     id="create-group-input"
+                    class="group-search-input"
+                    data-i18n="menu.create_group_placeholder"
                     placeholder="Enter group name"
                     autocomplete="off"
             />
-            <button onclick="createGroup()">Create</button>
+            <button onclick="createGroup()" data-i18n="menu.create_btn">Create</button>
             <div id="create-group-result"></div>
         </div>
 
         <div class="group-search-result" id="group-search-result" style="display: none;"></div>
 
-        <div class="my-groups-header">My Groups:</div>
+        <div class="my-groups-header" data-i18n="menu.my_groups_header">My Groups:</div>
         <div class="my-groups-list" id="my-groups-list"></div>
     </div>
 
     <div id="competitions-list" class="competitions-wrapper"></div>
 </div>
-<div id="user-name"></div>
 <div id="resultsContainer"></div>
 <div id="match-container"></div>
 <div id="spinner" class="spinner" style="display: none;"></div>
+<script src="/script/i18n.js"></script>
+<script src="/script/cache.js"></script>
 <script src="/script/office_page.js"></script>
 </body>
 </html>

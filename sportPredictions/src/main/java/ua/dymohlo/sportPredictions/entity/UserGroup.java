@@ -3,17 +3,15 @@ package ua.dymohlo.sportPredictions.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = {"users", "competitions"})
-@Table(name = "user_groups", uniqueConstraints = @UniqueConstraint(columnNames = "group_name"))
+@AllArgsConstructor
+@Table(name = "user_groups")
 public class UserGroup {
 
     @Id
@@ -34,18 +32,4 @@ public class UserGroup {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<User> users;
-
-    @ManyToMany
-    @JoinTable(
-            name = "group_competitions",
-            joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name = "competition_id")
-    )
-    private List<Competition> competitions;
-
-    @Column(name = "start_date")
-    private LocalDate startDate;
-
-    @Column(name = "finish_date")
-    private LocalDate finishDate;
 }

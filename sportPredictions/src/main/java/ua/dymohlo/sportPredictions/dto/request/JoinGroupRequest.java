@@ -8,7 +8,5 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JoinGroupRequest {
-
     private String groupName;
-    private String userName;
 }

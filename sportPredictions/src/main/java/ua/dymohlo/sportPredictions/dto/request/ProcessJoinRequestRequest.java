@@ -10,6 +10,5 @@ import lombok.*;
 public class ProcessJoinRequestRequest {
     private String userName;
     private String groupName;
-    private String leaderName;
     private String action;
 }

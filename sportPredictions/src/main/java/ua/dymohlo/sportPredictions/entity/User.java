@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
@@ -17,7 +16,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "user_name")
+    @Column(name = "user_name", nullable = false)
     private String userName;
     @Column(name = "ranking_position")
     private long rankingPosition;
@@ -27,8 +26,13 @@ public class User {
     private long predictionCount;
     @Column(name = "percent_guessed_matches")
     private int percentGuessedMatches;
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
     @Column(name = "last_predictions")
     private LocalDateTime lastPredictions;
+    @Builder.Default
+    @Column(name = "language", nullable = false, length = 5)
+    private String language = "en";
+    @Column(name = "telegram_chat_id")
+    private Long telegramChatId;
 }

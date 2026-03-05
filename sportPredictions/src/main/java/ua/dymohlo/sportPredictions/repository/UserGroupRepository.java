@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
+
     Optional<UserGroup> findByGroupName(String userGroupName);
 
     @Query("SELECT g FROM UserGroup g " +
@@ -17,5 +18,9 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
             "WHERE g.groupLeader = :user OR u = :user")
     List<UserGroup> findAllGroupsForUser(@Param("user") User user);
 
-}
+    @Query("SELECT COUNT(g) > 0 FROM UserGroup g LEFT JOIN g.users u " +
+            "WHERE g.groupName = :groupName AND (g.groupLeader.userName = :userName OR u.userName = :userName)")
+    boolean isUserMemberOfGroup(@Param("groupName") String groupName, @Param("userName") String userName);
 
+    long countByGroupLeader(User leader);
+}
