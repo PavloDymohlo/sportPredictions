@@ -1,5 +1,9 @@
 package ua.dymohlo.sportPredictions.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +20,7 @@ import ua.dymohlo.sportPredictions.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 
+@Tag(name = "Authentication", description = "Registration, login and logout. No authentication required.")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -26,6 +31,12 @@ public class AuthController {
 
     private static final int TEN_YEARS_SECONDS = 10 * 365 * 24 * 60 * 60;
 
+    @Operation(summary = "Register a new user",
+            description = "Creates a new account. Sets a JWT HttpOnly cookie on success.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Registered successfully. Returns userName and language."),
+            @ApiResponse(responseCode = "409", description = "Username already exists.")
+    })
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@RequestBody RegisterRequest request,
                                                         HttpServletResponse response) {
@@ -34,6 +45,13 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("userName", auth.getUserName(), "language", auth.getLanguage()));
     }
 
+    @Operation(summary = "Login",
+            description = "Authenticates a user. Sets a JWT HttpOnly cookie valid for 10 years. " +
+                    "After calling this endpoint in Swagger UI, all protected endpoints become accessible.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Login successful. Returns userName and language."),
+            @ApiResponse(responseCode = "401", description = "Invalid credentials.")
+    })
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> loginIn(@RequestBody LoginInRequest request,
                                                        HttpServletResponse response) {
@@ -42,6 +60,8 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("userName", auth.getUserName(), "language", auth.getLanguage()));
     }
 
+    @Operation(summary = "Logout", description = "Clears the JWT cookie.")
+    @ApiResponse(responseCode = "200", description = "Logged out successfully.")
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         clearJwtCookie(response);

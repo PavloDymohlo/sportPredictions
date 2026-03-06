@@ -26,7 +26,8 @@ public class WebSecurityConfig {
                                 "/rules",
                                 "/api/v0/auth/**",
                                 "/api/v0/scheduler/status",
-                                "/css/**", "/script/**", "/ico/**", "/images/**"
+                                "/css/**", "/script/**", "/ico/**", "/images/**",
+                                "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
