@@ -21,7 +21,7 @@ You can play on your own (global leaderboard) or create / join a **private group
 3. The **daily scheduler** automatically fetches real match results and scores your predictions.
 4. Your **global stats** (total score, accuracy %, ranking) update automatically.
 5. Optionally: **create or join a group**, set up a **tournament** with specific competitions and a date range, and compete against your friends on a separate group leaderboard.
-6. Link your **Telegram** account to receive match-day and result notifications.
+6. Optionally link your **Telegram** account. Once linked, the bot sends you a notification after each daily update — confirming that yesterday's results have been processed and new predictions can be submitted. Notifications are delivered in your preferred language (English or Ukrainian).
 
 ### Scoring
 
@@ -204,6 +204,26 @@ erDiagram
 - **Multi-tournament groups** — a group can run multiple tournaments sequentially, each with its own date range, competition set, and winner.
 - **Flyway migrations** — schema changes are version-controlled and applied automatically on startup.
 - **i18n** — UI supports English and Ukrainian; language preference is stored per user and persisted across sessions.
+- **Telegram bot (long polling)** — a background thread continuously polls the Telegram Bot API for updates. Users link their account by generating a one-time token on the website and sending `/start <token>` to the bot; the bot stores the `telegram_chat_id` on the user record. Sending `/stop` unlinks the account. After every daily scheduler run, all linked users receive a push notification in their preferred language.
+
+---
+
+## Telegram Bot
+
+The application includes an optional Telegram bot that keeps users informed without requiring them to visit the website.
+
+**Technology:** [Telegram Bot API](https://core.telegram.org/bots/api) via long polling. A dedicated background thread (`TelegramBotService`) continuously calls `getUpdates` and processes incoming commands. No webhook server or public URL is required.
+
+**What it does:**
+
+| Feature | Description |
+|---|---|
+| Account linking | User clicks "Link Telegram" on their office page → the server generates a short-lived one-time token → the page shows a direct bot link containing that token. The user opens the link and sends `/start <token>` to the bot. The bot validates the token and saves the user's `telegram_chat_id`. |
+| Account unlinking | User sends `/stop` to the bot — the `telegram_chat_id` is cleared from their record, and notifications stop. |
+| Daily notifications | After each daily scheduler run (results scored, rankings recalculated), the bot sends a push message to every linked user, announcing that new data is available and new predictions can be submitted. |
+| Bilingual messages | Every bot message respects the user's language preference — Ukrainian (`uk`) or English (default). |
+
+**To enable the bot**, create a bot via [@BotFather](https://t.me/BotFather) and set the two environment variables described in the Configuration section below.
 
 ---
 

@@ -1431,3 +1431,131 @@ body {
 .lang-btn.inactive:hover .fi {
     opacity: 0.85;
 }
+
+/* ── Bug Report ── */
+.bug-report-bar {
+    max-width: 1200px;
+    margin: -10px auto 15px;
+    box-sizing: border-box;
+}
+
+.bug-report-trigger-btn {
+    width: 100% !important;
+    background-color: #3aaf8c !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px 20px !important;
+    font-size: 15px !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s !important;
+    text-align: center !important;
+    margin: 0 !important;
+    display: block !important;
+    box-sizing: border-box !important;
+}
+
+.bug-report-trigger-btn:hover {
+    background-color: #2e9a79 !important;
+}
+
+.bug-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 3000;
+    align-items: center;
+    justify-content: center;
+}
+
+.bug-modal-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 28px;
+    width: 90%;
+    max-width: 520px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.bug-modal-title {
+    margin: 0 0 16px;
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+}
+
+.bug-report-textarea {
+    width: 100%;
+    min-height: 120px;
+    background: #f8f9fa;
+    color: #333;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: none;
+    overflow: hidden;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    display: block;
+}
+
+.bug-report-textarea:focus {
+    outline: none;
+    border-color: #42C2DF;
+}
+
+.bug-report-status {
+    min-height: 20px;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+.bug-modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    justify-content: flex-end;
+}
+
+.bug-cancel-btn {
+    background: #e0e0e0 !important;
+    color: #333 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 10px 22px !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    width: auto !important;
+    margin: 0 !important;
+    display: inline-block !important;
+    transition: background-color 0.2s !important;
+}
+
+.bug-cancel-btn:hover {
+    background: #c8c8c8 !important;
+}
+
+.bug-send-btn {
+    background: #42C2DF !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 10px 22px !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    width: auto !important;
+    margin: 0 !important;
+    display: inline-block !important;
+    transition: background-color 0.2s !important;
+}
+
+.bug-send-btn:hover:not(:disabled) {
+    background: #3594A9 !important;
+}
+
+.bug-send-btn:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+}

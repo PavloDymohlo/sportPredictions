@@ -117,6 +117,14 @@ const translations = {
     'tg.connect_btn': 'TG Bot',
     'tg.connected_btn': 'TG Bot ✓',
     'tg.disconnect_confirm': 'Disconnect Telegram notifications?',
+    'bug.btn': 'Spotted a bug? Please let us know!',
+    'bug.modal_title': 'Report a Bug',
+    'bug.placeholder': 'Describe the problem...',
+    'bug.send_btn': 'Send',
+    'bug.cancel_btn': 'Cancel',
+    'bug.success': 'Report sent! Thank you.',
+    'bug.error': 'Failed to send. Please try again.',
+    'bug.empty': 'Please describe the problem first.',
     'status.ACTIVE': 'ACTIVE',
     'status.FINISHED': 'FINISHED',
     'status.NOT_STARTED': 'NOT STARTED',
@@ -242,6 +250,14 @@ const translations = {
     'tg.connect_btn': '\u0422\u0413 \u0411\u043e\u0442',
     'tg.connected_btn': '\u0422\u0413 \u0411\u043e\u0442 \u2713',
     'tg.disconnect_confirm': '\u0412\u0456\u0434\u043a\u043b\u044e\u0447\u0438\u0442\u0438 Telegram-\u0441\u043f\u043e\u0432\u0456\u0449\u0435\u043d\u043d\u044f?',
+    'bug.btn': '\u041f\u043e\u0431\u0430\u0447\u0438\u0432 \u043f\u043e\u043c\u0438\u043b\u043a\u0443? \u043d\u0430\u043f\u0438\u0448\u0438, \u0431\u0443\u0434\u044c \u043b\u0430\u0441\u043a\u0430, \u043f\u0440\u043e \u043d\u0435\u0457!',
+    'bug.modal_title': '\u041f\u043e\u0432\u0456\u0434\u043e\u043c\u0438\u0442\u0438 \u043f\u0440\u043e \u043f\u043e\u043c\u0438\u043b\u043a\u0443',
+    'bug.placeholder': '\u041e\u043f\u0438\u0448\u0456\u0442\u044c \u043f\u0440\u043e\u0431\u043b\u0435\u043c\u0443...',
+    'bug.send_btn': '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438',
+    'bug.cancel_btn': '\u0421\u043a\u0430\u0441\u0443\u0432\u0430\u0442\u0438',
+    'bug.success': '\u0417\u0432\u0456\u0442 \u043d\u0430\u0434\u0456\u0441\u043b\u0430\u043d\u043e! \u0414\u044f\u043a\u0443\u0454\u043c\u043e.',
+    'bug.error': '\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u043d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438. \u0421\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u0449\u0435 \u0440\u0430\u0437.',
+    'bug.empty': '\u0411\u0443\u0434\u044c \u043b\u0430\u0441\u043a\u0430, \u0441\u043f\u043e\u0447\u0430\u0442\u043a\u0443 \u043e\u043f\u0438\u0448\u0456\u0442\u044c \u043f\u0440\u043e\u0431\u043b\u0435\u043c\u0443.',
     'status.ACTIVE': '\u0410\u041a\u0422\u0418\u0412\u041d\u0418\u0419',
     'status.FINISHED': '\u0417\u0410\u0412\u0415\u0420\u0428\u0415\u041d\u0418\u0419',
     'status.NOT_STARTED': '\u041d\u0415 \u0420\u041e\u0417\u041f\u041e\u0427\u0410\u0422\u041e',
@@ -317,7 +333,12 @@ a new request will not be accepted.</div>
 <li><strong>End date</strong> — can be changed as long as the final scoring night has not yet passed.
 This allows extending a tournament if the original end date was set incorrectly</li>
 </ul>
-<p>The leader can also <strong>delete a tournament</strong> or the entire group if needed.</p>`,
+<p>The leader can also <strong>delete a tournament</strong> or the entire group if needed.</p>
+<h2>Telegram Notifications</h2>
+<p>In your personal account there is a <strong>&laquo;Link Telegram&raquo;</strong> button. Clicking it generates a one-time link — open it in Telegram and send the displayed command to the bot. Once connected, the bot will send you a message every day after the nightly update, confirming that yesterday's results have been processed and new predictions are ready to submit.</p>
+<p>To disconnect the bot, click the button again (it will switch to <strong>&laquo;Disconnect Telegram&raquo;</strong>) or send <strong>/stop</strong> to the bot directly in Telegram.</p>
+<h2>Bug Reports</h2>
+<p>If you notice a bug or incorrect behaviour, you can report it directly from your personal account using the <strong>&laquo;Report a bug&raquo;</strong> button. Your message will be delivered instantly to the administrator via Telegram. The feature is available to all registered users.</p>`,
 
   uk: `
 <h1>\u041f\u0440\u0430\u0432\u0438\u043b\u0430 \u0433\u0440\u0438</h1>
@@ -364,7 +385,12 @@ This allows extending a tournament if the original end date was set incorrectly<
 <li><strong>\u0414\u0430\u0442\u0430 \u043f\u043e\u0447\u0430\u0442\u043a\u0443</strong> \u2014 \u043c\u043e\u0436\u043d\u0430 \u0437\u043c\u0456\u043d\u0438\u0442\u0438 \u043b\u0438\u0448\u0435 \u0434\u043e \u043f\u043e\u0447\u0430\u0442\u043a\u0443 \u0442\u0443\u0440\u043d\u0456\u0440\u0443</li>
 <li><strong>\u0414\u0430\u0442\u0430 \u0437\u0430\u043a\u0456\u043d\u0447\u0435\u043d\u043d\u044f</strong> \u2014 \u043c\u043e\u0436\u043d\u0430 \u0437\u043c\u0456\u043d\u0438\u0442\u0438, \u043f\u043e\u043a\u0438 \u043e\u0441\u0442\u0430\u043d\u043d\u044f \u043d\u0456\u0447 \u043f\u0456\u0434\u0440\u0430\u0445\u0443\u043d\u043a\u0443 \u0449\u0435 \u043d\u0435 \u043c\u0438\u043d\u0443\u043b\u0430. \u0426\u0435 \u0434\u043e\u0437\u0432\u043e\u043b\u044f\u0454 \u043f\u0440\u043e\u0434\u043e\u0432\u0436\u0438\u0442\u0438 \u0442\u0443\u0440\u043d\u0456\u0440, \u044f\u043a\u0449\u043e \u043f\u043e\u0447\u0430\u0442\u043a\u043e\u0432\u0430 \u0434\u0430\u0442\u0430 \u0437\u0430\u043a\u0456\u043d\u0447\u0435\u043d\u043d\u044f \u0431\u0443\u043b\u0430 \u0432\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0430 \u043d\u0435\u043f\u0440\u0430\u0432\u0438\u043b\u044c\u043d\u043e</li>
 </ul>
-<p>\u041b\u0456\u0434\u0435\u0440 \u0442\u0430\u043a\u043e\u0436 \u043c\u043e\u0436\u0435 <strong>\u0432\u0438\u0434\u0430\u043b\u0438\u0442\u0438 \u0442\u0443\u0440\u043d\u0456\u0440</strong> \u0430\u0431\u043e \u0432\u0441\u044e \u0433\u0440\u0443\u043f\u0443, \u044f\u043a\u0449\u043e \u0446\u0435 \u043d\u0435\u043e\u0431\u0445\u0456\u0434\u043d\u043e.</p>`
+<p>\u041b\u0456\u0434\u0435\u0440 \u0442\u0430\u043a\u043e\u0436 \u043c\u043e\u0436\u0435 <strong>\u0432\u0438\u0434\u0430\u043b\u0438\u0442\u0438 \u0442\u0443\u0440\u043d\u0456\u0440</strong> \u0430\u0431\u043e \u0432\u0441\u044e \u0433\u0440\u0443\u043f\u0443, \u044f\u043a\u0449\u043e \u0446\u0435 \u043d\u0435\u043e\u0431\u0445\u0456\u0434\u043d\u043e.</p>
+<h2>Telegram-\u0441\u043f\u043e\u0432\u0456\u0449\u0435\u043d\u043d\u044f</h2>
+<p>\u0412 \u043e\u0441\u043e\u0431\u0438\u0441\u0442\u043e\u043c\u0443 \u043a\u0430\u0431\u0456\u043d\u0435\u0442\u0456 \u0454 \u043a\u043d\u043e\u043f\u043a\u0430 <strong>&laquo;\u041f\u0456\u0434\u043a\u043b\u044e\u0447\u0438\u0442\u0438 Telegram&raquo;</strong>. \u041d\u0430\u0442\u0438\u0441\u043d\u0443\u0432\u0448\u0438 \u0457\u0457, \u0432\u0438 \u043e\u0442\u0440\u0438\u043c\u0430\u0454\u0442\u0435 \u043e\u0434\u043d\u043e\u0440\u0430\u0437\u043e\u0432\u0435 \u043f\u043e\u0441\u0438\u043b\u0430\u043d\u043d\u044f \u2014 \u0432\u0456\u0434\u043a\u0440\u0438\u0439\u0442\u0435 \u0439\u043e\u0433\u043e \u0432 Telegram \u0456 \u043d\u0430\u0434\u0456\u0448\u043b\u0456\u0442\u044c \u0431\u043e\u0442\u0443 \u0432\u0456\u0434\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0443 \u043a\u043e\u043c\u0430\u043d\u0434\u0443. \u041f\u0456\u0441\u043b\u044f \u043f\u0456\u0434\u043a\u043b\u044e\u0447\u0435\u043d\u043d\u044f \u0431\u043e\u0442 \u0449\u043e\u0434\u043d\u044f, \u043f\u0456\u0441\u043b\u044f \u043d\u0456\u0447\u043d\u043e\u0433\u043e \u043e\u043d\u043e\u0432\u043b\u0435\u043d\u043d\u044f, \u043d\u0430\u0434\u0441\u0438\u043b\u0430\u0442\u0438\u043c\u0435 \u0432\u0430\u043c \u043f\u043e\u0432\u0456\u0434\u043e\u043c\u043b\u0435\u043d\u043d\u044f \u043f\u0440\u043e \u0442\u0435, \u0449\u043e \u0440\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u0438 \u0432\u0447\u043e\u0440\u0430\u0448\u043d\u044c\u043e\u0433\u043e \u0434\u043d\u044f \u043e\u0431\u0440\u043e\u0431\u043b\u0435\u043d\u043e \u0456 \u043d\u043e\u0432\u0456 \u043f\u0440\u043e\u0433\u043d\u043e\u0437\u0438 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0456 \u0434\u043b\u044f \u0437\u0430\u043f\u043e\u0432\u043d\u0435\u043d\u043d\u044f.</p>
+<p>\u0429\u043e\u0431 \u0432\u0456\u0434\u043a\u043b\u044e\u0447\u0438\u0442\u0438 \u0431\u043e\u0442\u0430, \u043d\u0430\u0442\u0438\u0441\u043d\u0456\u0442\u044c \u043a\u043d\u043e\u043f\u043a\u0443 \u0449\u0435 \u0440\u0430\u0437 (\u0432\u043e\u043d\u0430 \u0437\u043c\u0456\u043d\u0438\u0442\u044c\u0441\u044f \u043d\u0430 <strong>&laquo;\u0412\u0456\u0434\u043a\u043b\u044e\u0447\u0438\u0442\u0438 Telegram&raquo;</strong>) \u0430\u0431\u043e \u043d\u0430\u0434\u0456\u0448\u043b\u0456\u0442\u044c <strong>/stop</strong> \u0431\u043e\u0442\u0443 \u0431\u0435\u0437\u043f\u043e\u0441\u0435\u0440\u0435\u0434\u043d\u044c\u043e \u0432 Telegram.</p>
+<h2>\u041f\u043e\u0432\u0456\u0434\u043e\u043c\u043b\u0435\u043d\u043d\u044f \u043f\u0440\u043e \u043f\u043e\u043c\u0438\u043b\u043a\u0438</h2>
+<p>\u042f\u043a\u0449\u043e \u0432\u0438 \u043f\u043e\u043c\u0456\u0442\u0438\u043b\u0438 \u043f\u043e\u043c\u0438\u043b\u043a\u0443 \u0430\u0431\u043e \u043d\u0435\u043a\u043e\u0440\u0435\u043a\u0442\u043d\u0443 \u0440\u043e\u0431\u043e\u0442\u0443 \u0441\u0430\u0439\u0442\u0443, \u0432\u0438 \u043c\u043e\u0436\u0435\u0442\u0435 \u043f\u043e\u0432\u0456\u0434\u043e\u043c\u0438\u0442\u0438 \u043f\u0440\u043e \u0446\u0435 \u043f\u0440\u044f\u043c\u043e \u0437 \u043e\u0441\u043e\u0431\u0438\u0441\u0442\u043e\u0433\u043e \u043a\u0430\u0431\u0456\u043d\u0435\u0442\u0443 \u0437\u0430 \u0434\u043e\u043f\u043e\u043c\u043e\u0433\u043e\u044e \u043a\u043d\u043e\u043f\u043a\u0438 <strong>&laquo;\u041f\u043e\u0432\u0456\u0434\u043e\u043c\u0438\u0442\u0438 \u043f\u0440\u043e \u043f\u043e\u043c\u0438\u043b\u043a\u0443&raquo;</strong>. \u0412\u0430\u0448\u0435 \u043f\u043e\u0432\u0456\u0434\u043e\u043c\u043b\u0435\u043d\u043d\u044f \u043c\u0438\u0442\u0442\u0454\u0432\u043e \u043d\u0430\u0434\u0456\u0439\u0434\u0435 \u0430\u0434\u043c\u0456\u043d\u0456\u0441\u0442\u0440\u0430\u0442\u043e\u0440\u0443 \u0447\u0435\u0440\u0435\u0437 Telegram. \u0424\u0443\u043d\u043a\u0446\u0456\u044f \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0430 \u0432\u0441\u0456\u043c \u0437\u0430\u0440\u0435\u0454\u0441\u0442\u0440\u043e\u0432\u0430\u043d\u0438\u043c \u043a\u043e\u0440\u0438\u0441\u0442\u0443\u0432\u0430\u0447\u0430\u043c.</p>`
 };
 
 function t(key) {
@@ -379,7 +405,7 @@ function applyTranslations(lang) {
     const key = el.getAttribute('data-i18n');
     const val = dict[key];
     if (val === undefined) return;
-    if (el.tagName === 'INPUT') {
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
       el.placeholder = val;
     } else {
       el.textContent = val;
@@ -413,6 +439,53 @@ function setLanguage(lang) {
 function initLang() {
   const lang = localStorage.getItem('lang') || 'en';
   setLanguage(lang);
+}
+
+function openBugReport() {
+  const modal = document.getElementById('bug-report-modal');
+  const textarea = document.getElementById('bug-report-textarea');
+  if (!modal || !textarea) return;
+  textarea.value = '';
+  textarea.style.height = 'auto';
+  document.getElementById('bug-report-status').textContent = '';
+  applyTranslations(localStorage.getItem('lang') || 'en');
+  modal.style.display = 'flex';
+  modal.onclick = function(e) { if (e.target === modal) closeBugReport(); };
+}
+
+function closeBugReport() {
+  const modal = document.getElementById('bug-report-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+function sendBugReport() {
+  const textarea = document.getElementById('bug-report-textarea');
+  const statusEl = document.getElementById('bug-report-status');
+  const message = textarea.value.trim();
+  if (!message) {
+    statusEl.textContent = t('bug.empty');
+    statusEl.style.color = '#e74c3c';
+    return;
+  }
+  const sendBtn = document.querySelector('.bug-send-btn');
+  sendBtn.disabled = true;
+  fetch('/api/v0/bug-report', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: message })
+  }).then(function(res) {
+    if (res.ok) {
+      statusEl.textContent = t('bug.success');
+      statusEl.style.color = '#27ae60';
+      setTimeout(closeBugReport, 2000);
+    } else {
+      statusEl.textContent = t('bug.error');
+      statusEl.style.color = '#e74c3c';
+    }
+  }).catch(function() {
+    statusEl.textContent = t('bug.error');
+    statusEl.style.color = '#e74c3c';
+  }).finally(function() { sendBtn.disabled = false; });
 }
 
 (function() { initLang(); })();

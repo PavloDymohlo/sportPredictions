@@ -24,6 +24,23 @@
         </button>
     </div>
 </div>
+<div class="bug-report-bar">
+    <button class="bug-report-trigger-btn" onclick="openBugReport()" data-i18n="bug.btn">Spotted a bug? Please let us know!</button>
+</div>
+
+<div id="bug-report-modal" class="bug-modal-overlay" style="display:none;">
+    <div class="bug-modal-box">
+        <h3 class="bug-modal-title" data-i18n="bug.modal_title">Report a Bug</h3>
+        <textarea id="bug-report-textarea" class="bug-report-textarea" data-i18n="bug.placeholder"
+                  oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+        <div id="bug-report-status" class="bug-report-status"></div>
+        <div class="bug-modal-actions">
+            <button class="bug-cancel-btn" onclick="closeBugReport()" data-i18n="bug.cancel_btn">Cancel</button>
+            <button class="bug-send-btn" onclick="sendBugReport()" data-i18n="bug.send_btn">Send</button>
+        </div>
+    </div>
+</div>
+
 <div class="menu" id="submenu">
     <div class="menu-header">
         <button class="close-button" onclick="closeMenu()">&#x2716;</button>
