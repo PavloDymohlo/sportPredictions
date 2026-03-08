@@ -23,4 +23,6 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
     boolean isUserMemberOfGroup(@Param("groupName") String groupName, @Param("userName") String userName);
 
     long countByGroupLeader(User leader);
+
+    List<UserGroup> findByGroupLeader(User groupLeader);
 }

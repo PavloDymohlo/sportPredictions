@@ -17,6 +17,7 @@ public interface GroupUserStatisticsRepository extends JpaRepository<GroupUserSt
 
     @Query("""
             SELECT gus FROM GroupUserStatistics gus
+            JOIN FETCH gus.user
             WHERE gus.groupTournament = :groupTournament
             ORDER BY gus.correctPredictions DESC, gus.accuracyPercent DESC
             """)

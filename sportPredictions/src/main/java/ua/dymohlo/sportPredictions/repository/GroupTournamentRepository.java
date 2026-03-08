@@ -16,7 +16,8 @@ public interface GroupTournamentRepository extends JpaRepository<GroupTournament
 
     List<GroupTournament> findByUserGroup(UserGroup userGroup);
 
-    List<GroupTournament> findByStatus(CompetitionStatus status);
+    @Query("SELECT DISTINCT t FROM GroupTournament t JOIN FETCH t.userGroup ug JOIN FETCH ug.users WHERE t.status = :status")
+    List<GroupTournament> findByStatus(@Param("status") CompetitionStatus status);
 
     @Query("SELECT t FROM GroupTournament t WHERE t.userGroup = :userGroup AND t.startDate <= :date AND t.finishDate >= :date")
     Optional<GroupTournament> findByUserGroupAndDateInRange(@Param("userGroup") UserGroup userGroup,

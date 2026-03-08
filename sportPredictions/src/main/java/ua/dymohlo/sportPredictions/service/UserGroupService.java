@@ -351,6 +351,20 @@ public class UserGroupService {
                 .toList();
     }
 
+    @Transactional
+    public void deleteGroupInternal(UserGroup group) {
+        List<GroupTournament> tournaments = groupTournamentRepository.findByUserGroup(group);
+        Set<Competition> competitionsToCheck = new HashSet<>();
+        for (GroupTournament tournament : tournaments) {
+            competitionsToCheck.addAll(collectAndDeleteTournamentData(tournament));
+        }
+        groupTournamentRepository.deleteAll(tournaments);
+        groupJoinRequestRepository.deleteByUserGroup(group);
+        userGroupRepository.delete(group);
+        competitionsToCheck.forEach(competitionService::deleteIfUnused);
+        log.info("🗑️ Group '{}' deleted internally", group.getGroupName());
+    }
+
     private Set<Competition> collectAndDeleteTournamentData(GroupTournament tournament) {
         Set<Competition> competitions = groupCompetitionRepository.findByGroupTournament(tournament).stream()
                 .map(GroupCompetition::getCompetition)
