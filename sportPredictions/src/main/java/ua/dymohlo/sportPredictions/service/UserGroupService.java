@@ -321,7 +321,7 @@ public class UserGroupService {
         userGroupRepository.delete(group);
         competitionsToCheck.forEach(competitionService::deleteIfUnused);
 
-        log.info("🗑️ Group '{}' deleted by leader '{}'", groupName, leaderName);
+        log.info("Group '{}' deleted by leader '{}'", groupName, leaderName);
     }
 
     @Transactional
@@ -338,7 +338,7 @@ public class UserGroupService {
         groupTournamentRepository.delete(tournament);
         competitionsToCheck.forEach(competitionService::deleteIfUnused);
 
-        log.info("🗑️ Tournament {} deleted from group '{}'", tournamentId, group.getGroupName());
+        log.info("Tournament {} deleted from group '{}'", tournamentId, group.getGroupName());
     }
 
     @Transactional(readOnly = true)
@@ -362,7 +362,7 @@ public class UserGroupService {
         groupJoinRequestRepository.deleteByUserGroup(group);
         userGroupRepository.delete(group);
         competitionsToCheck.forEach(competitionService::deleteIfUnused);
-        log.info("🗑️ Group '{}' deleted internally", group.getGroupName());
+        log.info("Group '{}' deleted internally", group.getGroupName());
     }
 
     private Set<Competition> collectAndDeleteTournamentData(GroupTournament tournament) {

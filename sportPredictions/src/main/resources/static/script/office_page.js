@@ -479,7 +479,7 @@ function buildMatchContent(container, matches, predictions, formattedDate) {
           rowDiv.className = 'team-score';
           const teamSpan = document.createElement('span');
           teamSpan.className = 'team';
-          teamSpan.textContent = info.teamName;
+          teamSpan.textContent = translateTeam(info.teamName);
           const scoreSpan = document.createElement('span');
           scoreSpan.className = 'score';
           scoreSpan.textContent = predIdx === 1 && info.fullScore === '?' ? '' : `${info.fullScore} ${getPredScore(prediction, predIdx)}`;
@@ -652,7 +652,7 @@ function displayFutureMatches(results, dates, predictionsByDate = {}) {
             team1.className = 'team';
 
             const team1Name = matchPair[0].replace(' null', '').replace(' ?', '').replace(/ 0$/, '').trim();
-            team1.textContent = team1Name;
+            team1.textContent = translateTeam(team1Name);
             matchData.teams.team1 = team1Name;
 
             const score1 = document.createElement('input');
@@ -674,7 +674,7 @@ function displayFutureMatches(results, dates, predictionsByDate = {}) {
             team2.className = 'team';
 
             const team2Name = matchPair[1].replace(' null', '').replace(' ?', '').replace(/ 0$/, '').trim();
-            team2.textContent = team2Name;
+            team2.textContent = translateTeam(team2Name);
             matchData.teams.team2 = team2Name;
 
             const score2 = document.createElement('input');
@@ -1351,13 +1351,15 @@ async function handleTelegramBtn() {
       console.error('Failed to disconnect Telegram:', e);
     }
   } else {
+    const win = window.open('', '_blank');
     try {
       const resp = await fetch('/api/v0/telegram/link-token');
-      if (!resp.ok) return;
+      if (!resp.ok) { win.close(); return; }
       const data = await resp.json();
-      window.open(`https://t.me/${data.botUsername}?start=${data.token}`, '_blank');
+      win.location.href = `https://t.me/${data.botUsername}?start=${data.token}`;
       startTelegramConnectionPolling();
     } catch (e) {
+      win.close();
       console.error('Failed to get Telegram link token:', e);
     }
   }

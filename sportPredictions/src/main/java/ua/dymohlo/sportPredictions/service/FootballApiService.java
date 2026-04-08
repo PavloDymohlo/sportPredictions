@@ -72,7 +72,7 @@ public class FootballApiService {
                     allMatchesResponses.add(response);
                 }
             } catch (Exception e) {
-                log.warn("Failed to fetch matches for competition {} after all retries: {}", code, e.getMessage());
+                log.warn("Failed to fetch matches for competition {} after all retries", code, e);
             }
 
             pauseIfBatchLimitReached(i + 1, competitions.size());

@@ -69,7 +69,7 @@ public class TelegramBotService implements DisposableBean {
                 }
             } catch (Exception e) {
                 if (running) {
-                    log.warn("Telegram polling error: {}", e.getMessage());
+                    log.warn("Telegram polling error", e);
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException ie) {
@@ -97,7 +97,7 @@ public class TelegramBotService implements DisposableBean {
                 handleStop(chatId);
             }
         } catch (Exception e) {
-            log.warn("Failed to process Telegram update: {}", e.getMessage());
+            log.warn("Failed to process Telegram update", e);
         }
     }
 
@@ -144,7 +144,7 @@ public class TelegramBotService implements DisposableBean {
                     .bodyToMono(Void.class)
                     .block(Duration.ofSeconds(10));
         } catch (Exception e) {
-            log.warn("Failed to send Telegram message to chat {}: {}", chatId, e.getMessage());
+            log.warn("Failed to send Telegram message to chat {}", chatId, e);
         }
     }
 

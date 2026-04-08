@@ -27,6 +27,12 @@ public class UpdateDataSchedule {
     private final SchedulerStatusService schedulerStatusService;
     private final TelegramNotificationService telegramNotificationService;
 
+    @Scheduled(cron = "${scheduler.telegram-cron}", zone = "Europe/Kiev")
+    public void sendTelegramNotifications() {
+        log.info("Sending Telegram notifications");
+        telegramNotificationService.notifyAllUsers();
+    }
+
     @Scheduled(cron = "${scheduler.cron}", zone = "Europe/Kiev")
     public void runDailyUpdate() {
         log.info("Daily update started");
@@ -85,7 +91,6 @@ public class UpdateDataSchedule {
         if (competitionsOk && pastMatchesOk && futureMatchesOk && statsOk) {
             schedulerStatusService.setCompleted();
             log.info("Daily update finished successfully");
-            telegramNotificationService.notifyAllUsers();
         } else {
             schedulerStatusService.setIncomplete();
             log.warn("Daily update finished with errors (competitions={}, pastMatches={}, futureMatches={}, stats={})",

@@ -46,7 +46,7 @@ public class MatchParser {
         try {
             return objectMapper.readValue(json, new TypeReference<>() {});
         } catch (Exception e) {
-            log.error("❌ Failed to deserialize match data for date: {}", date, e);
+            log.error("Failed to deserialize match data for date: {}", date, e);
             return null;
         }
     }

@@ -34,7 +34,7 @@ public class PredictionService {
 
     @Transactional
     public void saveUserPredictions(PredictionRequest predictionDTO, String username) {
-        log.info("💾 Saving predictions for user: {} on date: {}", username, predictionDTO.getMatchDate());
+        log.info("Saving predictions for user: {} on date: {}", username, predictionDTO.getMatchDate());
 
         User user = userRepository.findByUserName(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
@@ -55,17 +55,17 @@ public class PredictionService {
             prediction.setCreatedAt(LocalDateTime.now());
             predictionRepository.save(prediction);
 
-            log.info("✅ User {} prediction count increased by {} (total: {})",
+            log.info("User {} prediction count increased by {} (total: {})",
                     user.getUserName(), sumNewPredictions, user.getPredictionCount());
         } catch (Exception e) {
-            log.error("❌ Failed to save predictions for user: {}", username, e);
+            log.error("Failed to save predictions for user: {}", username, e);
             throw new RuntimeException("Failed to save predictions", e);
         }
     }
 
     @Transactional(readOnly = true)
     public Optional<PredictionRequest> getUserPredictions(String userName, String matchDate) {
-        log.info("🔍 Getting predictions for user: {} on date: {}", userName, matchDate);
+        log.debug("Getting predictions for user: {} on date: {}", userName, matchDate);
 
         try {
             User user = userRepository.findByUserName(userName)
@@ -84,12 +84,12 @@ public class PredictionService {
                                     .predictions(predictions)
                                     .build();
                         } catch (Exception e) {
-                            log.error("❌ Failed to deserialize predictions for user: {}", userName, e);
+                            log.error("Failed to deserialize predictions for user: {}", userName, e);
                             return null;
                         }
                     });
         } catch (Exception e) {
-            log.error("❌ Failed to get predictions for user: {} on date: {}", userName, matchDate, e);
+            log.error("Failed to get predictions for user: {} on date: {}", userName, matchDate, e);
             return Optional.empty();
         }
     }
@@ -98,6 +98,6 @@ public class PredictionService {
     public void cleanupOldPredictions() {
         LocalDate cutoff = LocalDate.now().minusDays(PREDICTION_TTL_DAYS);
         predictionRepository.deleteByMatchDateBefore(cutoff);
-        log.info("🗑️ Deleted predictions older than {}", cutoff);
+        log.info("Deleted predictions older than {}", cutoff);
     }
 }

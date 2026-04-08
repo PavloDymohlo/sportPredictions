@@ -680,10 +680,12 @@ function switchView(viewType) {
     matchesButton.classList.add('active');
 
     const dateInput = document.getElementById('matches-date');
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    dateInput.max = yesterdayStr;
     if (!dateInput.value) {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      dateInput.value = yesterday.toISOString().split('T')[0];
+      dateInput.value = yesterdayStr;
     }
     loadMatchesView();
   }
@@ -768,7 +770,7 @@ function displayMatchesView(data) {
 
       tableHTML += '<td class="match-combined-cell">';
       tableHTML += '<div class="match-info">';
-      tableHTML += `<span class="match-teams-text">${match.homeTeam} - ${match.awayTeam}</span>`;
+      tableHTML += `<span class="match-teams-text">${translateTeam(match.homeTeam)} - ${translateTeam(match.awayTeam)}</span>`;
       tableHTML += `<span class="match-score-text">${match.homeScore}:${match.awayScore}</span>`;
       tableHTML += '</div>';
       tableHTML += '</td>';

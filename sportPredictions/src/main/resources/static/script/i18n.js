@@ -393,6 +393,62 @@ This allows extending a tournament if the original end date was set incorrectly<
 <p>\u042f\u043a\u0449\u043e \u0432\u0438 \u043f\u043e\u043c\u0456\u0442\u0438\u043b\u0438 \u043f\u043e\u043c\u0438\u043b\u043a\u0443 \u0430\u0431\u043e \u043d\u0435\u043a\u043e\u0440\u0435\u043a\u0442\u043d\u0443 \u0440\u043e\u0431\u043e\u0442\u0443 \u0441\u0430\u0439\u0442\u0443, \u0432\u0438 \u043c\u043e\u0436\u0435\u0442\u0435 \u043f\u043e\u0432\u0456\u0434\u043e\u043c\u0438\u0442\u0438 \u043f\u0440\u043e \u0446\u0435 \u043f\u0440\u044f\u043c\u043e \u0437 \u043e\u0441\u043e\u0431\u0438\u0441\u0442\u043e\u0433\u043e \u043a\u0430\u0431\u0456\u043d\u0435\u0442\u0443 \u0437\u0430 \u0434\u043e\u043f\u043e\u043c\u043e\u0433\u043e\u044e \u043a\u043d\u043e\u043f\u043a\u0438 <strong>&laquo;\u041f\u043e\u0432\u0456\u0434\u043e\u043c\u0438\u0442\u0438 \u043f\u0440\u043e \u043f\u043e\u043c\u0438\u043b\u043a\u0443&raquo;</strong>. \u0412\u0430\u0448\u0435 \u043f\u043e\u0432\u0456\u0434\u043e\u043c\u043b\u0435\u043d\u043d\u044f \u043c\u0438\u0442\u0442\u0454\u0432\u043e \u043d\u0430\u0434\u0456\u0439\u0434\u0435 \u0430\u0434\u043c\u0456\u043d\u0456\u0441\u0442\u0440\u0430\u0442\u043e\u0440\u0443 \u0447\u0435\u0440\u0435\u0437 Telegram. \u0424\u0443\u043d\u043a\u0446\u0456\u044f \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0430 \u0432\u0441\u0456\u043c \u0437\u0430\u0440\u0435\u0454\u0441\u0442\u0440\u043e\u0432\u0430\u043d\u0438\u043c \u043a\u043e\u0440\u0438\u0441\u0442\u0443\u0432\u0430\u0447\u0430\u043c.</p>`
 };
 
+const teamTranslations = {
+  'Mexico': 'Мексика',
+  'South Africa': 'Південна Африка',
+  'South Korea': 'Південна Корея',
+  'Czech Republic': 'Чехія',
+  'Canada': 'Канада',
+  'Bosnia & Herzegovina': 'Боснія і Герцеговина',
+  'Qatar': 'Катар',
+  'Switzerland': 'Швейцарія',
+  'Brazil': 'Бразилія',
+  'Morocco': 'Марокко',
+  'Haiti': 'Гаїті',
+  'Scotland': 'Шотландія',
+  'USA': 'США',
+  'Paraguay': 'Парагвай',
+  'Australia': 'Австралія',
+  'Türkiye': 'Туреччина',
+  'Turkey': 'Туреччина',
+  'Germany': 'Німеччина',
+  'Curaçao': 'Кюрасао',
+  'Curacao': 'Кюрасао',
+  'Ivory Coast': 'Кот-д\'Івуар',
+  'Ecuador': 'Еквадор',
+  'Netherlands': 'Нідерланди',
+  'Japan': 'Японія',
+  'Sweden': 'Швеція',
+  'Tunisia': 'Туніс',
+  'Belgium': 'Бельгія',
+  'Egypt': 'Єгипет',
+  'Iran': 'Іран',
+  'New Zealand': 'Нова Зеландія',
+  'Spain': 'Іспанія',
+  'Cape Verde': 'Кабо-Верде',
+  'Saudi Arabia': 'Саудівська Аравія',
+  'Uruguay': 'Уругвай',
+  'France': 'Франція',
+  'Senegal': 'Сенегал',
+  'Iraq': 'Ірак',
+  'Norway': 'Норвегія',
+  'Argentina': 'Аргентина',
+  'Algeria': 'Алжир',
+  'Austria': 'Австрія',
+  'Jordan': 'Йорданія',
+  'Portugal': 'Португалія',
+  'DR Congo': 'ДР Конго',
+  'Uzbekistan': 'Узбекистан',
+  'Colombia': 'Колумбія'
+};
+
+function translateTeam(name) {
+  if (!name) return name;
+  const lang = localStorage.getItem('lang') || 'en';
+  if (lang !== 'uk') return name;
+  return teamTranslations[name] || name;
+}
+
 function t(key) {
   const lang = localStorage.getItem('lang') || 'en';
   const dict = translations[lang] || translations['en'];

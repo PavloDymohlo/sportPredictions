@@ -2,7 +2,6 @@ package ua.dymohlo.sportPredictions.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ua.dymohlo.sportPredictions.entity.User;
 import ua.dymohlo.sportPredictions.repository.UserRepository;
@@ -16,9 +15,6 @@ public class TelegramNotificationService {
 
     private final UserRepository userRepository;
     private final TelegramBotService telegramBotService;
-
-    @Value("${app.base-url}")
-    private String appBaseUrl;
 
     private static final String MSG_EN = """
             ✅ New data is available!
@@ -47,7 +43,7 @@ public class TelegramNotificationService {
                 telegramBotService.sendMessage(user.getTelegramChatId(), text);
                 success++;
             } catch (Exception e) {
-                log.warn("Failed to notify user '{}': {}", user.getUserName(), e.getMessage());
+                log.warn("Failed to notify user '{}'", user.getUserName(), e);
             }
         }
         log.info("Telegram notifications sent: {}/{}", success, users.size());
@@ -55,6 +51,6 @@ public class TelegramNotificationService {
 
     private String buildMessage(String language) {
         String body = "uk".equals(language) ? MSG_UK : MSG_EN;
-        return body + appBaseUrl;
+        return body;
     }
 }

@@ -31,12 +31,13 @@ public class TournamentLifecycleService {
     @Transactional
     public void updateTournamentStatuses() {
         LocalDate today = LocalDate.now();
-        List<GroupTournament> allTournaments = groupTournamentRepository.findAll();
+        List<GroupTournament> allTournaments = groupTournamentRepository
+                .findByStatusIn(List.of(CompetitionStatus.NOT_STARTED, CompetitionStatus.ACTIVE));
 
         for (GroupTournament tournament : allTournaments) {
             CompetitionStatus newStatus = determineTournamentStatus(tournament, today);
             if (tournament.getStatus() != newStatus) {
-                log.info("📌 Tournament {} status changed: {} → {}",
+                log.info("Tournament {} status changed: {} -> {}",
                         tournament.getId(), tournament.getStatus(), newStatus);
                 tournament.setStatus(newStatus);
                 groupTournamentRepository.save(tournament);
@@ -59,14 +60,14 @@ public class TournamentLifecycleService {
 
     @Transactional
     public void finalizeCompletedTournaments() {
-        log.info("🏆 ========== FINALIZING COMPLETED TOURNAMENTS ==========");
+        log.info("========== FINALIZING COMPLETED TOURNAMENTS ==========");
 
         List<GroupTournament> finishedTournaments = groupTournamentRepository.findByStatus(CompetitionStatus.FINISHED);
-        log.info("🎖️ Found {} FINISHED tournaments", finishedTournaments.size());
+        log.info("Found {} FINISHED tournaments to finalize", finishedTournaments.size());
 
         for (GroupTournament tournament : finishedTournaments) {
             if (tournament.getWinner() != null) {
-                log.info("⏭️ Tournament {} already has winner: {}",
+                log.debug("Tournament {} already has winner: {}",
                         tournament.getId(), tournament.getWinner().getUserName());
                 continue;
             }
@@ -75,7 +76,7 @@ public class TournamentLifecycleService {
                     .findByGroupTournamentOrderedByRanking(tournament);
 
             if (ranking.isEmpty()) {
-                log.warn("⚠️ Tournament {} has no statistics", tournament.getId());
+                log.warn("Tournament {} has no statistics, cannot determine winner", tournament.getId());
                 continue;
             }
 
@@ -83,28 +84,28 @@ public class TournamentLifecycleService {
             tournament.setWinner(winnerStats.getUser());
             groupTournamentRepository.save(tournament);
 
-            log.info("🏆 Tournament {} WINNER: {} (correct: {}/{}, accuracy: {}%)",
+            log.info("Tournament {} WINNER: {} (correct: {}/{}, accuracy: {}%)",
                     tournament.getId(), winnerStats.getUser().getUserName(),
                     winnerStats.getCorrectPredictions(), winnerStats.getPredictionCount(),
                     winnerStats.getAccuracyPercent());
         }
 
-        log.info("🎉 ========== FINALIZATION COMPLETE ==========");
+        log.info("========== FINALIZATION COMPLETE ==========");
     }
 
     @Transactional
     public void deleteExpiredFinishedTournaments() {
-        log.info("🗑️ ========== DELETING EXPIRED FINISHED TOURNAMENTS ==========");
+        log.info("========== DELETING EXPIRED FINISHED TOURNAMENTS ==========");
 
         LocalDate cutoffDate = LocalDate.now().minusDays(3);
         List<GroupTournament> expired = groupTournamentRepository.findFinishedTournamentsOlderThan(cutoffDate);
-        log.info("🗑️ Found {} expired FINISHED tournaments (finished on or before {})", expired.size(), cutoffDate);
+        log.info("Found {} expired FINISHED tournaments (finished on or before {})", expired.size(), cutoffDate);
 
         for (GroupTournament tournament : expired) {
             deleteExpiredTournament(tournament);
         }
 
-        log.info("🎉 ========== EXPIRED TOURNAMENTS CLEANUP COMPLETE ==========");
+        log.info("========== EXPIRED TOURNAMENTS CLEANUP COMPLETE ==========");
     }
 
     private void deleteExpiredTournament(GroupTournament tournament) {
@@ -117,7 +118,7 @@ public class TournamentLifecycleService {
         groupTournamentRepository.delete(tournament);
         competitionsToCheck.forEach(competitionService::deleteIfUnused);
 
-        log.info("🗑️ Deleted expired tournament id={} (finishDate: {})",
+        log.info("Deleted expired tournament id={} (finishDate: {})",
                 tournament.getId(), tournament.getFinishDate());
     }
 }

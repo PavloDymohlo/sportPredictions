@@ -104,7 +104,7 @@ public class CompetitionCacheService {
 
     private void scheduleRetry(Runnable task, String description) {
         Instant retryTime = Instant.now().plus(RETRY_DELAY_MINUTES, ChronoUnit.MINUTES);
-        log.warn("⏰ Scheduling retry for '{}' at {}", description, retryTime);
+        log.warn("Scheduling retry for '{}' at {}", description, retryTime);
         taskScheduler.schedule(task, retryTime);
     }
 }

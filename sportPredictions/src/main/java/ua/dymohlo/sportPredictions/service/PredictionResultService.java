@@ -1,12 +1,16 @@
 package ua.dymohlo.sportPredictions.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ua.dymohlo.sportPredictions.component.MatchParser;
 import ua.dymohlo.sportPredictions.dto.request.PredictionRequest;
+import ua.dymohlo.sportPredictions.entity.Prediction;
 import ua.dymohlo.sportPredictions.entity.User;
 import ua.dymohlo.sportPredictions.repository.MatchDataRepository;
+import ua.dymohlo.sportPredictions.repository.PredictionRepository;
 import ua.dymohlo.sportPredictions.repository.UserCompetitionRepository;
 import ua.dymohlo.sportPredictions.repository.UserRepository;
 import ua.dymohlo.sportPredictions.util.MatchParsingUtils;
@@ -26,60 +30,49 @@ public class PredictionResultService {
     private final UserRepository userRepository;
     private final UserCompetitionRepository userCompetitionRepository;
     private final MatchParser matchParser;
-    private final PredictionService predictionService;
+    private final PredictionRepository predictionRepository;
     private final MatchDataRepository matchDataRepository;
+    private final ObjectMapper objectMapper;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public void countAllUsersPredictionsResult() {
-        log.info("🎯 ========== STARTING DAILY PREDICTION RESULTS CALCULATION ==========");
+        log.info("========== STARTING DAILY PREDICTION RESULTS CALCULATION ==========");
 
         LocalDate yesterday = LocalDate.now().minusDays(1);
 
         if (!matchDataRepository.existsByMatchDate(yesterday)) {
-            log.warn("⚠️ No match data for {} — skipping prediction scoring to avoid data corruption", yesterday);
+            log.warn("No match data for {} — skipping prediction scoring to avoid data corruption", yesterday);
             return;
         }
 
-        List<User> users = userRepository.findAll();
+        List<Prediction> predictions = predictionRepository.findByMatchDateWithUser(yesterday);
         String date = yesterday.format(DATE_FORMATTER);
-        log.info("📅 Processing predictions for date: {}", date);
+        log.info("Processing predictions for date: {} ({} users)", date, predictions.size());
 
         int processedUsers = 0;
         int totalCorrectPredictions = 0;
-        int usersWithPredictions = 0;
 
-        for (User user : users) {
+        for (Prediction prediction : predictions) {
             try {
-                PredictionRequest predictions = predictionService.getUserPredictions(user.getUserName(), date).orElse(null);
-
-                if (predictions != null && predictions.getPredictions() != null
-                        && !predictions.getPredictions().isEmpty()) {
-                    usersWithPredictions++;
-                    int correctCount = processUserPredictionResults(user.getUserName(), date);
-                    processedUsers++;
-                    totalCorrectPredictions += correctCount;
-                } else {
-                    log.info("⏭️ Skipping user {} - no predictions for {}", user.getUserName(), date);
-                }
+                int correctCount = processUserPredictionResults(prediction, date);
+                processedUsers++;
+                totalCorrectPredictions += correctCount;
             } catch (Exception e) {
-                log.error("❌ Error processing user {}: {}", user.getUserName(), e.getMessage(), e);
+                log.error("Error processing user {}", prediction.getUser().getUserName(), e);
             }
         }
 
-        log.info("🎉 ========== CALCULATION COMPLETE ==========");
-        log.info("📊 Users with predictions: {}/{}", usersWithPredictions, users.size());
-        log.info("📊 Successfully processed: {}", processedUsers);
-        log.info("📊 Total correct predictions: {}", totalCorrectPredictions);
+        log.info("========== PREDICTION RESULTS CALCULATION COMPLETE ==========");
+        log.info("Users with predictions: {}, successfully processed: {}, total correct: {}",
+                predictions.size(), processedUsers, totalCorrectPredictions);
     }
 
-    private int processUserPredictionResults(String userName, String date) {
-        log.info("📊 Processing results for user: {} on date: {}", userName, date);
+    private int processUserPredictionResults(Prediction prediction, String date) {
+        User user = prediction.getUser();
+        log.debug("Processing results for user: {} on date: {}", user.getUserName(), date);
 
-        User user = userRepository.findByUserName(userName)
-                .orElseThrow(() -> new RuntimeException("User not found: " + userName));
-
-        List<Object> correctResults = getCorrectPredictions(userName, date);
+        List<Object> correctResults = getCorrectPredictions(user, prediction, date);
         int userPoints = correctResults.size();
 
         long oldScore = user.getTotalScore();
@@ -88,17 +81,14 @@ public class PredictionResultService {
                 MatchParsingUtils.calculateAccuracyPercent(user.getTotalScore(), user.getPredictionCount()));
         userRepository.save(user);
 
-        log.info("💾 Saved user {} - Score: {} -> {} (+{}), Percent: {}%",
-                userName, oldScore, user.getTotalScore(), userPoints, user.getPercentGuessedMatches());
+        log.debug("Saved user {} — score: {} -> {} (+{}), accuracy: {}%",
+                user.getUserName(), oldScore, user.getTotalScore(), userPoints, user.getPercentGuessedMatches());
 
         return userPoints;
     }
 
-    private List<Object> getCorrectPredictions(String userName, String date) {
-        log.info("🔍 Getting correct predictions for user: {} on date: {}", userName, date);
-
-        User user = userRepository.findByUserName(userName)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    private List<Object> getCorrectPredictions(User user, Prediction prediction, String date) {
+        log.debug("Getting correct predictions for user: {} on date: {}", user.getUserName(), date);
 
         List<String> subscribedTournaments = userCompetitionRepository.findByUser(user).stream()
                 .map(uc -> MatchParsingUtils.competitionKey(
@@ -112,19 +102,26 @@ public class PredictionResultService {
         List<Map<String, Object>> userTournaments = matchParser.getUserMatches(date, subscribedTournaments);
 
         if (userTournaments.isEmpty()) {
-            log.warn("⚠️ No match results found for date: {}", date);
+            log.warn("No match results found for date: {}", date);
             return Collections.emptyList();
         }
 
-        PredictionRequest predictions = predictionService.getUserPredictions(userName, date).orElse(null);
-
-        if (predictions == null || predictions.getPredictions() == null || predictions.getPredictions().isEmpty()) {
-            log.info("⏭️ No predictions for user: {} on date: {}", userName, date);
+        List<Object> predictionsList;
+        try {
+            predictionsList = objectMapper.readValue(prediction.getPredictionsData(), new TypeReference<>() {});
+        } catch (Exception e) {
+            log.error("Failed to deserialize predictions for user: {}", user.getUserName(), e);
             return Collections.emptyList();
         }
+
+        PredictionRequest predictionRequest = PredictionRequest.builder()
+                .userName(user.getUserName())
+                .matchDate(date)
+                .predictions(predictionsList)
+                .build();
 
         List<Object> onlyMatchResult = MatchParsingUtils.extractMatchesFromTournaments(userTournaments);
-        List<Object> userPredictions = MatchParsingUtils.extractUserPredictions(predictions);
+        List<Object> userPredictions = MatchParsingUtils.extractUserPredictions(predictionRequest);
 
         List<Object> correctResult = new ArrayList<>();
         for (Object matchResult : onlyMatchResult) {
@@ -136,7 +133,7 @@ public class PredictionResultService {
             }
         }
 
-        log.info("🎯 Total correct predictions: {}/{}", correctResult.size(), onlyMatchResult.size());
+        log.debug("Correct predictions for user {}: {}/{}", user.getUserName(), correctResult.size(), onlyMatchResult.size());
         return correctResult;
     }
 }

@@ -40,16 +40,16 @@ public class TournamentStatisticsProcessor {
         LocalDate processFrom = resolveStartDate(tournament, predictionTtlLimit);
 
         if (processFrom.isAfter(yesterday)) {
-            log.info("⏭️ Tournament {} is up to date (lastProcessed={})",
+            log.debug("Tournament {} is up to date (lastProcessed={})",
                     tournament.getId(), tournament.getLastProcessedDate());
             return;
         }
 
-        log.info("📊 Tournament {} — processing dates {} to {}", tournament.getId(), processFrom, yesterday);
+        log.info("Tournament {} — processing dates {} to {}", tournament.getId(), processFrom, yesterday);
 
         for (LocalDate d = processFrom; !d.isAfter(yesterday); d = d.plusDays(1)) {
             if (!matchDataRepository.existsByMatchDate(d)) {
-                log.warn("⚠️ No match data for {} — pausing stats for tournament {}, will retry next run",
+                log.warn("No match data for {} — pausing stats for tournament {}, will retry next run",
                         d, tournament.getId());
                 return;
             }
@@ -61,7 +61,7 @@ public class TournamentStatisticsProcessor {
     }
 
     private void calculateStatisticsForDate(GroupTournament tournament, String date) {
-        log.info("📊 Calculating statistics for tournament id={} in group: {} on date: {}",
+        log.debug("Calculating statistics for tournament id={} in group: {} on date: {}",
                 tournament.getId(), tournament.getUserGroup().getGroupName(), date);
 
         LocalDate targetDate = LocalDate.parse(date, DATE_FORMATTER);
@@ -69,7 +69,7 @@ public class TournamentStatisticsProcessor {
         if (!isDateInTournamentRange(tournament, targetDate)) return;
 
         if (tournament.getStatus() != CompetitionStatus.ACTIVE) {
-            log.info("⏭️ Tournament {} is not ACTIVE (status: {})", tournament.getId(), tournament.getStatus());
+            log.debug("Tournament {} is not ACTIVE (status: {})", tournament.getId(), tournament.getStatus());
             return;
         }
 
@@ -79,18 +79,18 @@ public class TournamentStatisticsProcessor {
                 .toList();
 
         if (competitionKeys.isEmpty()) {
-            log.warn("⚠️ Tournament {} has no competitions", tournament.getId());
+            log.warn("Tournament {} has no competitions", tournament.getId());
             return;
         }
 
         List<Map<String, Object>> groupMatches = matchParser.getUserMatches(date, competitionKeys);
         if (groupMatches.isEmpty()) {
-            log.warn("⚠️ No matches found for tournament {} on date {}", tournament.getId(), date);
+            log.warn("No matches found for tournament {} on date {}", tournament.getId(), date);
             return;
         }
 
         List<Object> allMatchResults = MatchParsingUtils.extractMatchesFromTournaments(groupMatches);
-        log.info("📊 Found {} matches for tournament competitions", allMatchResults.size());
+        log.debug("Found {} matches for tournament {} on date {}", allMatchResults.size(), tournament.getId(), date);
 
         for (User member : tournament.getUserGroup().getUsers()) {
             processUserStats(tournament, member, date, allMatchResults);
@@ -101,12 +101,12 @@ public class TournamentStatisticsProcessor {
 
     private void processUserStats(GroupTournament tournament, User user, String date,
                                    List<Object> allMatchResults) {
-        log.info("👤 Processing user {} in tournament {}", user.getUserName(), tournament.getId());
+        log.debug("Processing user {} in tournament {}", user.getUserName(), tournament.getId());
 
         PredictionRequest userPredictions = predictionService.getUserPredictions(user.getUserName(), date).orElse(null);
         if (userPredictions == null || userPredictions.getPredictions() == null
                 || userPredictions.getPredictions().isEmpty()) {
-            log.info("⏭️ User {} has no predictions for {}", user.getUserName(), date);
+            log.debug("User {} has no predictions for {}", user.getUserName(), date);
             return;
         }
 
@@ -114,7 +114,7 @@ public class TournamentStatisticsProcessor {
         int[] counts = countPredictions(allMatchResults, userPredictionsList);
 
         if (counts[0] == 0) {
-            log.info("⏭️ User {} has no predictions for tournament competitions", user.getUserName());
+            log.debug("User {} has no predictions for tournament competitions", user.getUserName());
             return;
         }
 
@@ -159,7 +159,7 @@ public class TournamentStatisticsProcessor {
 
         groupUserStatisticsRepository.save(stats);
 
-        log.info("✅ Updated stats for {} in tournament {}: correct={}/{}, accuracy={}%",
+        log.debug("Updated stats for {} in tournament {}: correct={}/{}, accuracy={}%",
                 user.getUserName(), tournament.getId(),
                 stats.getCorrectPredictions(), stats.getPredictionCount(), stats.getAccuracyPercent());
     }
@@ -186,7 +186,7 @@ public class TournamentStatisticsProcessor {
         }
 
         groupUserStatisticsRepository.saveAll(allStats);
-        log.info("✅ Updated ranking positions for tournament {}", tournament.getId());
+        log.debug("Updated ranking positions for tournament {}", tournament.getId());
     }
 
     private LocalDate resolveStartDate(GroupTournament tournament, LocalDate predictionTtlLimit) {
@@ -200,11 +200,11 @@ public class TournamentStatisticsProcessor {
 
     private boolean isDateInTournamentRange(GroupTournament tournament, LocalDate date) {
         if (tournament.getStartDate() != null && date.isBefore(tournament.getStartDate())) {
-            log.info("⏭️ Date {} is before tournament start date {}", date, tournament.getStartDate());
+            log.debug("Date {} is before tournament {} start date {}", date, tournament.getId(), tournament.getStartDate());
             return false;
         }
         if (tournament.getFinishDate() != null && date.isAfter(tournament.getFinishDate())) {
-            log.info("⏭️ Date {} is after tournament finish date {}", date, tournament.getFinishDate());
+            log.debug("Date {} is after tournament {} finish date {}", date, tournament.getId(), tournament.getFinishDate());
             return false;
         }
         return true;

@@ -48,7 +48,7 @@ public class MatchDataCacheService {
 
             LocalDate cutoff = LocalDate.now().minusDays(MATCH_DATA_TTL_DAYS);
             if (date.isBefore(cutoff)) {
-                log.info("⏭️ Match date {} is older than 4 days, skipping storage", date);
+                log.info("Match date {} is older than 4 days, skipping storage", date);
                 return parsedData;
             }
 
@@ -58,25 +58,25 @@ public class MatchDataCacheService {
             matchData.setFetchedAt(LocalDateTime.now());
             matchDataRepository.save(matchData);
 
-            log.info("✅ Match data saved to DB for date: {}", date);
+            log.info("Match data saved to DB for date: {}", date);
 
             if (isRetry && date.equals(LocalDate.now().minusDays(1)) && onRetrySuccess != null) {
-                log.info("🔄 Retry succeeded for past matches ({}) — recalculating stats", date);
+                log.info("Retry succeeded for past matches ({}) — recalculating stats", date);
                 try {
                     onRetrySuccess.run();
-                    log.info("✅ Stats recalculated after retry — scheduler status set to COMPLETED");
+                    log.info("Stats recalculated after retry");
                 } catch (Exception e) {
-                    log.error("❌ Failed to recalculate stats after retry", e);
+                    log.error("Failed to recalculate stats after retry", e);
                 }
             }
 
             return parsedData;
         } catch (Exception e) {
-            log.error("❌ Error updating match data for date: {}", date, e);
+            log.error("Error updating match data for date: {}", date, e);
             if (!isRetry) {
                 scheduleRetry(() -> parseAndCacheMatchesInternal(date, true, onRetrySuccess), "matches for " + date);
             } else {
-                log.error("❌ Match data retry for date {} also failed. Giving up.", date);
+                log.error("Match data retry for date {} also failed. Giving up.", date);
             }
             return "[]";
         }
@@ -85,12 +85,12 @@ public class MatchDataCacheService {
     public void cleanupOldMatchData() {
         LocalDate cutoff = LocalDate.now().minusDays(MATCH_DATA_TTL_DAYS);
         matchDataRepository.deleteByMatchDateBefore(cutoff);
-        log.info("🗑️ Deleted match data older than {}", cutoff);
+        log.info("Deleted match data older than {}", cutoff);
     }
 
     private void scheduleRetry(Runnable task, String description) {
         Instant retryTime = Instant.now().plus(RETRY_DELAY_MINUTES, ChronoUnit.MINUTES);
-        log.warn("⏰ Scheduling retry for '{}' at {}", description, retryTime);
+        log.warn("Scheduling retry for '{}' at {}", description, retryTime);
         taskScheduler.schedule(task, retryTime);
     }
 }

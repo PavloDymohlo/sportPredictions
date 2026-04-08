@@ -31,19 +31,17 @@ public class UserCompetitionService {
 
     @Transactional(readOnly = true)
     public List<CompetitionResponse> getUserCompetitions(String userName) {
-        log.info("🔍 Service: Looking for username: [{}]", userName);
+        log.debug("Looking for user competitions: [{}]", userName);
 
         Optional<User> userOpt = userRepository.findByUserName(userName);
         if (userOpt.isEmpty()) {
-            log.warn("❌ User not found: [{}]", userName);
+            log.warn("User not found: [{}]", userName);
             return Collections.emptyList();
         }
 
         User user = userOpt.get();
-        log.info("✅ User found: {} (ID: {})", user.getUserName(), user.getId());
-
         List<UserCompetition> userCompetitions = userCompetitionRepository.findByUser(user);
-        log.info("✅ Found {} user competitions", userCompetitions.size());
+        log.debug("Found {} competitions for user {}", userCompetitions.size(), user.getUserName());
 
         return userCompetitions.stream()
                 .map(uc -> {

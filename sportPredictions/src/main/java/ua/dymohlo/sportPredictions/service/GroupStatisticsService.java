@@ -33,27 +33,27 @@ public class GroupStatisticsService {
     private final TournamentStatisticsProcessor processor;
 
     public void calculateAllGroupsStatistics() {
-        log.info("🎯 ========== STARTING GROUP STATISTICS CALCULATION ==========");
+        log.info("========== STARTING GROUP STATISTICS CALCULATION ==========");
 
         LocalDate today = LocalDate.now();
         LocalDate yesterday = today.minusDays(1);
         LocalDate predictionTtlLimit = today.minusDays(3);
 
-        log.info("📅 Processing up to: {}", yesterday);
+        log.info("Processing up to: {}", yesterday);
 
         List<GroupTournament> activeTournaments = groupTournamentRepository.findByStatus(CompetitionStatus.ACTIVE);
-        log.info("🏆 Found {} ACTIVE tournaments to process", activeTournaments.size());
+        log.info("Found {} ACTIVE tournaments to process", activeTournaments.size());
 
         for (GroupTournament tournament : activeTournaments) {
             try {
                 processor.process(tournament, yesterday, predictionTtlLimit);
             } catch (Exception e) {
-                log.error("❌ Error processing tournament {}: {}", tournament.getId(), e.getMessage(), e);
+                log.error("Error processing tournament {}", tournament.getId(), e);
             }
         }
 
         tournamentLifecycleService.updateTournamentStatuses();
-        log.info("🎉 ========== GROUP STATISTICS CALCULATION COMPLETE ==========");
+        log.info("========== GROUP STATISTICS CALCULATION COMPLETE ==========");
     }
 
     @Transactional(readOnly = true)

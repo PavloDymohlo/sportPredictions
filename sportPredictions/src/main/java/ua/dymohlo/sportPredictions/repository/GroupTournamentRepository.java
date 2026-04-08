@@ -25,6 +25,8 @@ public interface GroupTournamentRepository extends JpaRepository<GroupTournament
 
     long countByUserGroupAndStatusIn(UserGroup userGroup, Collection<CompetitionStatus> statuses);
 
+    List<GroupTournament> findByStatusIn(Collection<CompetitionStatus> statuses);
+
     @Query("SELECT t FROM GroupTournament t WHERE t.status = 'FINISHED' AND t.finishDate <= :cutoffDate")
     List<GroupTournament> findFinishedTournamentsOlderThan(@Param("cutoffDate") LocalDate cutoffDate);
 }

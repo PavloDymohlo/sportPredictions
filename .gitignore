@@ -93,3 +93,8 @@ nb-configuration.xml
 ## Spring Boot local config
 ##############################
 **/application-local.properties
+
+##############################
+## Docker secrets
+##############################
+.env

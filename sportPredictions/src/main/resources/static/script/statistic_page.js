@@ -2,17 +2,11 @@ async function fetchUsers() {
   const spinner = document.getElementById('spinner');
   spinner.style.display = 'block';
   try {
-    const cached = await SportCache.get('global-stats');
-    if (cached) {
-      displayUsers(cached);
-      return;
-    }
     const response = await fetch('/api/v0/statistic/general');
     if (!response.ok) {
       throw new Error('Failed to fetch users');
     }
     const users = await response.json();
-    await SportCache.set('global-stats', users);
     displayUsers(users);
   } catch (error) {
     console.error('Error:', error);
