@@ -27,6 +27,7 @@ public class CompetitionCacheService {
 
     private final ApiDataParser apiDataParser;
     private final FootballApiService footballApiService;
+    private final CompetitionService competitionService;
     private final CompetitionRepository competitionRepository;
     private final GroupCompetitionRepository groupCompetitionRepository;
     private final ObjectMapper objectMapper;
@@ -67,6 +68,16 @@ public class CompetitionCacheService {
                 log.warn("API returned empty competitions list — skipping DB sync to avoid data loss");
                 return;
             }
+
+            for (Map<String, Object> comp : apiCompetitions) {
+                String country = (String) comp.get("country");
+                String name = (String) comp.get("name");
+                String code = (String) comp.get("code");
+                if (country != null && name != null && code != null) {
+                    competitionService.findOrCreate(country, name, code);
+                }
+            }
+            log.info("Upserted {} competition(s) from API", apiCompetitions.size());
 
             List<Competition> obsolete = competitionRepository.findByCodeNotIn(apiCodes);
             for (Competition competition : obsolete) {

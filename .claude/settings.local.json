@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(grep:*)",
-      "Bash(./mvnw package:*)"
+      "Bash(./mvnw package:*)",
+      "Bash(xargs ls:*)"
     ]
   }
 }
