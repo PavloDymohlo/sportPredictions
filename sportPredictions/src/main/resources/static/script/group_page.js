@@ -319,8 +319,7 @@ async function loadGroupTournaments(groupName) {
     };
 
     const currentUser = localStorage.getItem('userName');
-    const groupLeaderElement = document.querySelector('.group-info-header strong:last-child');
-    const isLeader = groupLeaderElement && currentUser === groupLeaderElement.textContent;
+    const isLeader = GROUP_LEADER_NAME != null && currentUser?.trim() === GROUP_LEADER_NAME.trim();
     const today = new Date().toISOString().split('T')[0];
 
     tournaments.forEach(tournament => {

@@ -47,17 +47,21 @@ public class TournamentStatisticsProcessor {
 
         log.info("Tournament {} — processing dates {} to {}", tournament.getId(), processFrom, yesterday);
 
+        LocalDate lastSuccessfulDate = null;
         for (LocalDate d = processFrom; !d.isAfter(yesterday); d = d.plusDays(1)) {
             if (!matchDataRepository.existsByMatchDate(d)) {
                 log.warn("No match data for {} — pausing stats for tournament {}, will retry next run",
                         d, tournament.getId());
-                return;
+                break;
             }
             calculateStatisticsForDate(tournament, d.format(DATE_FORMATTER));
+            lastSuccessfulDate = d;
         }
 
-        tournament.setLastProcessedDate(yesterday);
-        groupTournamentRepository.save(tournament);
+        if (lastSuccessfulDate != null) {
+            tournament.setLastProcessedDate(lastSuccessfulDate);
+            groupTournamentRepository.save(tournament);
+        }
     }
 
     private void calculateStatisticsForDate(GroupTournament tournament, String date) {
