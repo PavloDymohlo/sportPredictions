@@ -11,7 +11,6 @@ import ua.dymohlo.sportPredictions.entity.Prediction;
 import ua.dymohlo.sportPredictions.entity.User;
 import ua.dymohlo.sportPredictions.repository.MatchDataRepository;
 import ua.dymohlo.sportPredictions.repository.PredictionRepository;
-import ua.dymohlo.sportPredictions.repository.UserCompetitionRepository;
 import ua.dymohlo.sportPredictions.repository.UserRepository;
 import ua.dymohlo.sportPredictions.util.MatchParsingUtils;
 
@@ -28,7 +27,6 @@ import java.util.Map;
 public class PredictionResultService {
 
     private final UserRepository userRepository;
-    private final UserCompetitionRepository userCompetitionRepository;
     private final MatchParser matchParser;
     private final PredictionRepository predictionRepository;
     private final MatchDataRepository matchDataRepository;
@@ -90,18 +88,9 @@ public class PredictionResultService {
     private List<Object> getCorrectPredictions(User user, Prediction prediction, String date) {
         log.debug("Getting correct predictions for user: {} on date: {}", user.getUserName(), date);
 
-        List<String> subscribedTournaments = userCompetitionRepository.findByUser(user).stream()
-                .map(uc -> MatchParsingUtils.competitionKey(
-                        uc.getCompetition().getCountry(), uc.getCompetition().getName()))
-                .toList();
+        List<Map<String, Object>> allTournaments = matchParser.getAllMatchesForDate(date);
 
-        if (subscribedTournaments.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<Map<String, Object>> userTournaments = matchParser.getUserMatches(date, subscribedTournaments);
-
-        if (userTournaments.isEmpty()) {
+        if (allTournaments.isEmpty()) {
             log.warn("No match results found for date: {}", date);
             return Collections.emptyList();
         }
@@ -120,12 +109,12 @@ public class PredictionResultService {
                 .predictions(predictionsList)
                 .build();
 
-        List<Object> onlyMatchResult = MatchParsingUtils.extractMatchesFromTournaments(userTournaments);
+        List<Object> allMatchResults = MatchParsingUtils.extractMatchesFromTournaments(allTournaments);
         List<Object> userPredictions = MatchParsingUtils.extractUserPredictions(predictionRequest);
 
         List<Object> correctResult = new ArrayList<>();
-        for (Object matchResult : onlyMatchResult) {
-            for (Object userPrediction : userPredictions) {
+        for (Object userPrediction : userPredictions) {
+            for (Object matchResult : allMatchResults) {
                 if (MatchParsingUtils.matchesAreEqual(matchResult, userPrediction)) {
                     correctResult.add(matchResult);
                     break;
@@ -133,7 +122,7 @@ public class PredictionResultService {
             }
         }
 
-        log.debug("Correct predictions for user {}: {}/{}", user.getUserName(), correctResult.size(), onlyMatchResult.size());
+        log.debug("Correct predictions for user {}: {}/{}", user.getUserName(), correctResult.size(), allMatchResults.size());
         return correctResult;
     }
 }

@@ -129,8 +129,8 @@ public class TournamentStatisticsProcessor {
         int total = 0;
         int correct = 0;
 
-        for (Object matchResult : allMatchResults) {
-            for (Object userPrediction : userPredictionsList) {
+        for (Object userPrediction : userPredictionsList) {
+            for (Object matchResult : allMatchResults) {
                 if (MatchParsingUtils.teamsMatch(matchResult, userPrediction)) {
                     total++;
                     if (MatchParsingUtils.matchesAreEqual(matchResult, userPrediction)) {

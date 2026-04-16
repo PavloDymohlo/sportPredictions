@@ -36,6 +36,12 @@ public class MatchParser {
                 .collect(Collectors.toList());
     }
 
+    public List<Map<String, Object>> getAllMatchesForDate(String date) {
+        LocalDate matchDate = LocalDate.parse(date);
+        List<Map<String, Object>> allMatches = loadMatchesFromDb(matchDate);
+        return allMatches != null ? allMatches : Collections.emptyList();
+    }
+
     private List<Map<String, Object>> loadMatchesFromDb(LocalDate date) {
         String json = matchDataRepository.findByMatchDate(date)
                 .map(MatchData::getMatchesJson)
