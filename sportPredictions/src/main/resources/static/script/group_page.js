@@ -206,7 +206,6 @@ async function createGroupCompetitions() {
 
     toggleCompetitionsDropdown();
     selectedTournamentId = null;
-    SportCache.invalidate(`group-tournaments_${groupName}`);
     loadGroupTournaments(groupName);
     loadGroupMembers(groupName);
 
@@ -275,19 +274,14 @@ async function loadCompetitionsForGroup() {
 
 async function loadGroupTournaments(groupName) {
   try {
-    const cacheKey = `group-tournaments_${groupName}`;
-    let tournaments = await SportCache.get(cacheKey);
-    if (!tournaments) {
-      const response = await fetch(`/api/v0/user-group/tournaments/${encodeURIComponent(groupName)}`);
+    const response = await fetch(`/api/v0/user-group/tournaments/${encodeURIComponent(groupName)}`);
 
-      if (!response.ok) {
-        console.log('Failed to load group tournaments');
-        return;
-      }
-
-      tournaments = await response.json();
-      await SportCache.set(cacheKey, tournaments);
+    if (!response.ok) {
+      console.log('Failed to load group tournaments');
+      return;
     }
+
+    const tournaments = await response.json();
     console.log('Group tournaments loaded:', tournaments);
 
     const competitionsList = document.getElementById('competitions-list');
@@ -441,7 +435,6 @@ async function saveTournamentDates(event, tournamentId) {
       throw new Error(errorText || 'Failed to update dates');
     }
 
-    SportCache.invalidate(`group-tournaments_${groupName}`);
     loadGroupTournaments(groupName);
   } catch (error) {
     showToast(error.message || t('msg.fail_update_dates'), 'error');
@@ -465,7 +458,6 @@ async function confirmDeleteTournament(event, tournamentId, groupName) {
       throw new Error(errorText || 'Failed to delete tournament');
     }
     if (selectedTournamentId === tournamentId) selectedTournamentId = null;
-    SportCache.invalidate(`group-tournaments_${groupName}`);
     loadGroupTournaments(groupName);
     loadGroupMembers(groupName);
     showToast(t('msg.tournament_deleted'), 'success');
@@ -612,23 +604,18 @@ function addUserToMembersTable(userName) {
 
 async function loadGroupMembers(groupName) {
   try {
-    const cacheKey = `group-ranking_${groupName}_${selectedTournamentId || 'all'}`;
-    let ranking = await SportCache.get(cacheKey);
-    if (!ranking) {
-      let url = `/api/v0/user-group/ranking/${encodeURIComponent(groupName)}`;
-      if (selectedTournamentId) {
-        url += `?tournamentId=${selectedTournamentId}`;
-      }
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        console.log('Failed to load group ranking');
-        return;
-      }
-
-      ranking = await response.json();
-      await SportCache.set(cacheKey, ranking);
+    let url = `/api/v0/user-group/ranking/${encodeURIComponent(groupName)}`;
+    if (selectedTournamentId) {
+      url += `?tournamentId=${selectedTournamentId}`;
     }
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      console.log('Failed to load group ranking');
+      return;
+    }
+
+    const ranking = await response.json();
     console.log('Group ranking loaded:', ranking);
 
     const membersTable = document.querySelector('#statistics-view table tbody');
@@ -705,26 +692,17 @@ async function loadMatchesView() {
   try {
     document.getElementById('spinner').style.display = 'block';
 
-    const cacheKey = `group-matches_${groupName}_${date}_${selectedTournamentId || 'all'}`;
-    const today = new Date().toISOString().split('T')[0];
-    const isPastDate = date < today;
-    let data = isPastDate ? await SportCache.get(cacheKey) : null;
-    if (!data) {
-      let url = `/api/v0/user-group/matches-with-predictions/${encodeURIComponent(groupName)}?date=${date}`;
-      if (selectedTournamentId) {
-        url += `&tournamentId=${selectedTournamentId}`;
-      }
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error('Failed to load matches');
-      }
-
-      data = await response.json();
-      if (isPastDate) {
-        await SportCache.set(cacheKey, data);
-      }
+    let url = `/api/v0/user-group/matches-with-predictions/${encodeURIComponent(groupName)}?date=${date}`;
+    if (selectedTournamentId) {
+      url += `&tournamentId=${selectedTournamentId}`;
     }
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error('Failed to load matches');
+    }
+
+    const data = await response.json();
     displayMatchesView(data);
 
   } catch (error) {

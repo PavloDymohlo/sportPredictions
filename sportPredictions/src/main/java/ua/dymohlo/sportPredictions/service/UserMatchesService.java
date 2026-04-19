@@ -42,7 +42,7 @@ public class UserMatchesService {
         User user = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<String> allTournaments = getUserTournaments(user);
+        List<String> allTournaments = getUserTournaments(user, false);
 
         if (allTournaments.isEmpty()) {
             return Collections.emptyList();
@@ -57,7 +57,7 @@ public class UserMatchesService {
         User user = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<String> allTournaments = getUserTournaments(user);
+        List<String> allTournaments = getUserTournaments(user, true);
 
         if (allTournaments.isEmpty()) {
             return Collections.emptyList();
@@ -105,7 +105,7 @@ public class UserMatchesService {
         return correctPredictions;
     }
 
-    private List<String> getUserTournaments(User user) {
+    private List<String> getUserTournaments(User user, boolean includeCompleted) {
         List<String> subscribedTournaments = userCompetitionRepository.findByUser(user).stream()
                 .map(uc -> MatchParsingUtils.competitionKey(
                         uc.getCompetition().getCountry(), uc.getCompetition().getName()))
@@ -113,7 +113,8 @@ public class UserMatchesService {
 
         List<String> groupTournaments = userGroupRepository.findAllGroupsForUser(user).stream()
                 .flatMap(userGroup -> groupTournamentRepository.findByUserGroup(userGroup).stream()
-                        .filter(t -> t.getStatus() == CompetitionStatus.ACTIVE
+                        .filter(t -> includeCompleted
+                                || t.getStatus() == CompetitionStatus.ACTIVE
                                 || t.getStatus() == CompetitionStatus.NOT_STARTED))
                 .flatMap(tournament -> groupCompetitionRepository.findByGroupTournament(tournament).stream())
                 .map(gc -> MatchParsingUtils.competitionKey(

@@ -11,6 +11,12 @@ import java.util.NoSuchElementException;
 @ControllerAdvice
 public class ExceptionHandlerController {
 
+    @ExceptionHandler(PredictionClosedException.class)
+    public ResponseEntity<String> handlePredictionClosed(PredictionClosedException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(e.getMessage() != null ? e.getMessage() : "Prediction window is closed");
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+
 import reactor.util.retry.Retry;
 import ua.dymohlo.sportPredictions.entity.Competition;
 
@@ -40,7 +42,7 @@ public class FootballApiService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .retryWhen(Retry.fixedDelay(2, Duration.ofSeconds(10))
-                        .filter(this::isRetryable)
+                        .filter(t -> t instanceof WebClientRequestException)
                         .doBeforeRetry(signal -> log.warn("Retrying competitions request, attempt {}/3",
                                 signal.totalRetries() + 2)))
                 .block();
@@ -57,17 +59,7 @@ public class FootballApiService {
             String code = competition.getCode();
 
             try {
-                String response = footballWebClient.get()
-                        .uri("/competitions/{code}/matches?dateFrom={date}&dateTo={date}", code, date, date)
-                        .header(tokenHeader, apiKey)
-                        .retrieve()
-                        .bodyToMono(String.class)
-                        .retryWhen(Retry.fixedDelay(2, Duration.ofSeconds(10))
-                                .filter(this::isRetryable)
-                                .doBeforeRetry(signal -> log.warn("Retrying {} attempt {}/3",
-                                        code, signal.totalRetries() + 2)))
-                        .block();
-
+                String response = fetchWithRateLimitRetry(code, date);
                 if (response != null) {
                     allMatchesResponses.add(response);
                 }
@@ -86,6 +78,34 @@ public class FootballApiService {
         return allMatchesResponses;
     }
 
+    private String fetchWithRateLimitRetry(String code, String date) {
+        try {
+            return footballWebClient.get()
+                    .uri("/competitions/{code}/matches?dateFrom={date}&dateTo={date}", code, date, date)
+                    .header(tokenHeader, apiKey)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .retryWhen(Retry.fixedDelay(2, Duration.ofSeconds(10))
+                            .filter(t -> t instanceof WebClientRequestException)
+                            .doBeforeRetry(signal -> log.warn("Retrying {} attempt {}/3",
+                                    code, signal.totalRetries() + 2)))
+                    .block();
+        } catch (WebClientResponseException.TooManyRequests e) {
+            log.warn("429 Too Many Requests for {}. Sleeping {} ms before retry...", code, PAUSE_MILLIS);
+            try {
+                Thread.sleep(PAUSE_MILLIS);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            }
+            return footballWebClient.get()
+                    .uri("/competitions/{code}/matches?dateFrom={date}&dateTo={date}", code, date, date)
+                    .header(tokenHeader, apiKey)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+        }
+    }
+
     private void pauseIfBatchLimitReached(int processed, int total) {
         if (processed % BATCH_SIZE == 0 && processed < total) {
             log.info("Batch limit reached ({} requests). Sleeping {} ms...", BATCH_SIZE, PAUSE_MILLIS);
@@ -98,7 +118,4 @@ public class FootballApiService {
         }
     }
 
-    private boolean isRetryable(Throwable t) {
-        return t instanceof WebClientRequestException;
-    }
 }

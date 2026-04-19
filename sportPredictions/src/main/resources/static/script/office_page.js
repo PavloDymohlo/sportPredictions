@@ -308,14 +308,6 @@ async function getMatchResult() {
     date.setDate(date.getDate() - daysBack);
     const formattedDate = formatDate(date);
 
-    const cacheKey = `match-status_${formattedDate}_${userName}`;
-    let cached = null;
-    try { cached = await SportCache.get(cacheKey); } catch (e) {}
-    if (cached) {
-      renderPastDaySection(resultsContainer, formattedDate, cached.matches, cached.predictions, daysBack === 1);
-      continue;
-    }
-
     try {
       const [matchesResponse, predictionsResponse] = await Promise.all([
         fetch(`/api/v0/predictions/match-status?date=${formattedDate}`),
@@ -333,7 +325,6 @@ async function getMatchResult() {
         predictions = predJson.predictions;
       }
 
-      await SportCache.set(cacheKey, { matches, predictions });
       renderPastDaySection(resultsContainer, formattedDate, matches, predictions, daysBack === 1);
     } catch (error) {
       console.error(`Error fetching data for ${formattedDate}:`, error);
@@ -513,27 +504,15 @@ async function getFutureMatches() {
     const formattedDate = formatDate(date);
     dates.push(formattedDate);
 
-    const cacheKey = `future-matches_${formattedDate}`;
-    let cached = null;
-    try { cached = await SportCache.get(cacheKey); } catch (e) {}
-    if (cached) {
-      results.push(cached);
-    } else {
-      try {
-        const response = await fetch(`/api/v0/predictions/future-matches?date=${formattedDate}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        const innerData = Array.isArray(data) && data.length === 1 ? data[0] : data;
-        const hasMatches = innerData && Array.isArray(innerData) && innerData.length > 0;
-        if (hasMatches) {
-          await SportCache.set(cacheKey, data);
-        }
-        results.push(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+    try {
+      const response = await fetch(`/api/v0/predictions/future-matches?date=${formattedDate}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
+      const data = await response.json();
+      results.push(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
 
     try {
@@ -848,14 +827,6 @@ function displayFutureMatches(results, dates, predictionsByDate = {}) {
 
               submitButton.disabled = true;
               submitButton.textContent = t('msg.prediction_saved_btn');
-              const matchDate = dates[index];
-              SportCache.invalidate(`future-matches_${matchDate}`);
-              SportCache.invalidate(`match-status_${matchDate}_${userName}`);
-              Object.keys(localStorage).forEach(key => {
-                if (key.startsWith('sp_cache_group-matches_') && key.includes(`_${matchDate}_`)) {
-                  localStorage.removeItem(key);
-                }
-              });
             })
             .catch(error => {
               console.error('There was a problem with the fetch operation:', error);
@@ -1014,18 +985,12 @@ async function getCompetitions() {
 
     const userName = localStorage.getItem('userName');
     if (userName) {
-      const userCompCacheKey = `user-competitions_${userName}`;
-      let userCompetitions = null;
-      try { userCompetitions = await SportCache.get(userCompCacheKey); } catch (e) {}
-      if (!userCompetitions) {
-        const userCompResponse = await fetch('/api/v0/competitions/user-competitions');
-        if (userCompResponse.ok) {
-          userCompetitions = await userCompResponse.json();
-          await SportCache.set(userCompCacheKey, userCompetitions);
-        } else {
-          console.warn('❌ User competitions request not OK', userCompResponse.status);
-          userCompetitions = [];
-        }
+      let userCompetitions = [];
+      const userCompResponse = await fetch('/api/v0/competitions/user-competitions');
+      if (userCompResponse.ok) {
+        userCompetitions = await userCompResponse.json();
+      } else {
+        console.warn('❌ User competitions request not OK', userCompResponse.status);
       }
       displayCompetitions(competitionsData, userCompetitions);
     } else {
@@ -1256,8 +1221,6 @@ function displayCompetitions(competitionsData, userCompetitions = []) {
           saveButton.textContent = 'SAVED ✓';
           saveButton.style.backgroundColor = '#4CAF50';
           console.log('✅ Competitions saved successfully');
-
-          SportCache.invalidate(`user-competitions_${userName}`);
 
           setTimeout(() => {
             saveButton.textContent = 'SAVE';

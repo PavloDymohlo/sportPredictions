@@ -173,9 +173,10 @@ public class GroupMatchesService {
             String homePred = String.valueOf(match.get(0));
             String awayPred = String.valueOf(match.get(1));
 
-            if (MatchParsingUtils.extractTeamName(homePred).equalsIgnoreCase(homeTeam) &&
-                    MatchParsingUtils.extractTeamName(awayPred).equalsIgnoreCase(awayTeam)) {
+            String homePredTeam = MatchParsingUtils.extractTeamName(homePred);
+            String awayPredTeam = MatchParsingUtils.extractTeamName(awayPred);
 
+            if (teamsMatch(homePredTeam, homeTeam) && teamsMatch(awayPredTeam, awayTeam)) {
                 String homePredScore = MatchParsingUtils.extractScoreString(homePred);
                 String awayPredScore = MatchParsingUtils.extractScoreString(awayPred);
 
@@ -187,6 +188,13 @@ public class GroupMatchesService {
             }
         }
         return emptyPrediction();
+    }
+
+    private boolean teamsMatch(String predTeam, String resultTeam) {
+        if (predTeam.equalsIgnoreCase(resultTeam)) return true;
+        String p = predTeam.toLowerCase();
+        String r = resultTeam.toLowerCase();
+        return p.contains(r) || r.contains(p);
     }
 
     private UserPrediction emptyPrediction() {

@@ -47,17 +47,18 @@ public class UpdateDataSchedule {
             log.error("Failed to fetch competitions from API", e);
         }
 
+        Runnable postFetchOperations = () -> {
+            predictionResultService.countAllUsersPredictionsResult();
+            groupStatisticsService.calculateAllGroupsStatistics();
+            tournamentLifecycleService.finalizeCompletedTournaments();
+            tournamentLifecycleService.deleteExpiredFinishedTournaments();
+        };
+
         try {
-            Runnable onRetrySuccess = () -> {
-                predictionResultService.countAllUsersPredictionsResult();
-                groupStatisticsService.calculateAllGroupsStatistics();
-                tournamentLifecycleService.finalizeCompletedTournaments();
-                schedulerStatusService.setCompleted();
-            };
-            matchDataCacheService.parseAndCachePastMatches(onRetrySuccess);
+            matchDataCacheService.parseAndCachePastMatches(postFetchOperations);
             pastMatchesOk = true;
         } catch (Exception e) {
-            log.error("Failed to fetch and cache past matches", e);
+            log.error("Failed to fetch and cache past matches — stats will run after retry", e);
         }
 
         try {
@@ -69,13 +70,10 @@ public class UpdateDataSchedule {
 
         try {
             if (pastMatchesOk) {
-                predictionResultService.countAllUsersPredictionsResult();
+                postFetchOperations.run();
             } else {
-                log.warn("Skipping prediction scoring — past match data not available");
+                log.warn("Skipping statistics — past match data not available, retry scheduled");
             }
-            groupStatisticsService.calculateAllGroupsStatistics();
-            tournamentLifecycleService.finalizeCompletedTournaments();
-            tournamentLifecycleService.deleteExpiredFinishedTournaments();
             statsOk = pastMatchesOk;
         } catch (Exception e) {
             log.error("Failed to calculate group statistics", e);

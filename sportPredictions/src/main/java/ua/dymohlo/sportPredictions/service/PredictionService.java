@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.dymohlo.sportPredictions.component.MatchParser;
 import ua.dymohlo.sportPredictions.dto.request.PredictionRequest;
+import ua.dymohlo.sportPredictions.exception.PredictionClosedException;
 import ua.dymohlo.sportPredictions.entity.Prediction;
 import ua.dymohlo.sportPredictions.entity.User;
 import ua.dymohlo.sportPredictions.repository.PredictionRepository;
@@ -46,6 +47,9 @@ public class PredictionService {
 
         try {
             LocalDate matchDate = LocalDate.parse(predictionDTO.getMatchDate(), DATE_FORMATTER);
+            if (!matchDate.isAfter(LocalDate.now())) {
+                throw new PredictionClosedException("Prediction window is closed for: " + matchDate);
+            }
             String predictionsJson = objectMapper.writeValueAsString(predictionDTO.getPredictions());
 
             Prediction prediction = predictionRepository

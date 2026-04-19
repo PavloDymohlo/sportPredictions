@@ -33,15 +33,16 @@ public class MatchDataCacheService {
         return parseAndCacheMatchesInternal(LocalDate.now().minusDays(1), false, onRetrySuccess);
     }
 
-    public String parseAndCacheFutureMatches() {
+        public String parseAndCacheFutureMatches() {
         return parseAndCacheMatchesInternal(LocalDate.now().plusDays(3), false, null);
     }
+
 
     public String parseAndCacheMatchesFromApi(LocalDate date) {
         return parseAndCacheMatchesInternal(date, false, null);
     }
 
-    private String parseAndCacheMatchesInternal(LocalDate date, boolean isRetry, Runnable onRetrySuccess) {
+    private String parseAndCacheMatchesInternal(LocalDate date, boolean isRetry, Runnable onSuccess) {
         try {
             List<String> responses = footballApiService.getMatchesFromApi(date, competitionRepository.findAll());
             String parsedData = apiDataParser.parseMatches(responses, date);
@@ -60,13 +61,12 @@ public class MatchDataCacheService {
 
             log.info("Match data saved to DB for date: {}", date);
 
-            if (isRetry && date.equals(LocalDate.now().minusDays(1)) && onRetrySuccess != null) {
-                log.info("Retry succeeded for past matches ({}) — recalculating stats", date);
+            if (isRetry && onSuccess != null) {
+                log.info("Retry succeeded for date {} — running post-fetch operations", date);
                 try {
-                    onRetrySuccess.run();
-                    log.info("Stats recalculated after retry");
+                    onSuccess.run();
                 } catch (Exception e) {
-                    log.error("Failed to recalculate stats after retry", e);
+                    log.error("Post-fetch operations failed after retry for date {}", date, e);
                 }
             }
 
@@ -74,11 +74,11 @@ public class MatchDataCacheService {
         } catch (Exception e) {
             log.error("Error updating match data for date: {}", date, e);
             if (!isRetry) {
-                scheduleRetry(() -> parseAndCacheMatchesInternal(date, true, onRetrySuccess), "matches for " + date);
+                scheduleRetry(() -> parseAndCacheMatchesInternal(date, true, onSuccess), "matches for " + date);
             } else {
                 log.error("Match data retry for date {} also failed. Giving up.", date);
             }
-            return "[]";
+            throw new RuntimeException("Failed to fetch match data for date: " + date, e);
         }
     }
 

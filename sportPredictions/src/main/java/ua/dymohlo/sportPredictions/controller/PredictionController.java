@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ua.dymohlo.sportPredictions.dto.request.PredictionRequest;
 import ua.dymohlo.sportPredictions.dto.response.TournamentWithStatusResponse;
+import ua.dymohlo.sportPredictions.service.MatchDataCacheService;
 import ua.dymohlo.sportPredictions.service.PredictionService;
 import ua.dymohlo.sportPredictions.service.UserMatchesService;
 
@@ -29,6 +30,7 @@ public class PredictionController {
 
     private final PredictionService predictionService;
     private final UserMatchesService userMatchesService;
+    private final MatchDataCacheService matchDataCacheService;
 
     @Operation(summary = "Get matches with prediction status",
             description = "Returns all matches for the given date grouped by competition, " +
@@ -86,5 +88,12 @@ public class PredictionController {
                                                       Authentication auth) {
         predictionService.saveUserPredictions(request, auth.getName());
         return ResponseEntity.ok("Success");
+    }
+
+    // TEST ONLY — remove after testing
+    @PostMapping("/test-fetch-future")
+    public ResponseEntity<String> testFetchFutureMatches() {
+        matchDataCacheService.parseAndCacheFutureMatches();
+        return ResponseEntity.ok("Fetched days +54..+61");
     }
 }
