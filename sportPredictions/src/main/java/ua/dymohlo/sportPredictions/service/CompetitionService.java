@@ -34,10 +34,17 @@ public class CompetitionService {
 
     @Transactional
     public void deleteIfUnused(Competition competition) {
+        deleteIfUnusedReturning(competition);
+    }
+
+    @Transactional
+    public boolean deleteIfUnusedReturning(Competition competition) {
         if (!groupCompetitionRepository.existsByCompetition(competition)
                 && userCompetitionRepository.countByCompetition(competition) == 0) {
             competitionRepository.delete(competition);
             log.info("Deleted unused competition '{}' ({})", competition.getName(), competition.getCode());
+            return true;
         }
+        return false;
     }
 }

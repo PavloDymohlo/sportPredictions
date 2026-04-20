@@ -92,9 +92,9 @@ public class ApiDataParser {
         for (JsonNode match : matchesNode) {
             ArrayNode singleMatch = objectMapper.createArrayNode();
             singleMatch.add(match.path("homeTeam").path("name").asText() + " " +
-                    match.path("score").path("fullTime").path("home").asText());
+                    match.path("score").path("fullTime").path("home").asText("null"));
             singleMatch.add(match.path("awayTeam").path("name").asText() + " " +
-                    match.path("score").path("fullTime").path("away").asText());
+                    match.path("score").path("fullTime").path("away").asText("null"));
             matchArray.add(singleMatch);
         }
         return matchArray;

@@ -2,6 +2,7 @@ package ua.dymohlo.sportPredictions.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import ua.dymohlo.sportPredictions.entity.User;
 import ua.dymohlo.sportPredictions.repository.UserRepository;
@@ -11,6 +12,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@ConditionalOnProperty(name = "telegram.enabled", havingValue = "true")
 public class TelegramNotificationService {
 
     private final UserRepository userRepository;

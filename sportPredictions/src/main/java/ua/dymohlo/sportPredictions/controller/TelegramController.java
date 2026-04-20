@@ -31,7 +31,7 @@ public class TelegramController {
     private final UserRepository userRepository;
     private final TelegramLinkTokenRepository tokenRepository;
 
-    @Value("${telegram.bot.username}")
+    @Value("${telegram.bot.username:}")
     private String botUsername;
 
     @Operation(summary = "Generate Telegram link token",

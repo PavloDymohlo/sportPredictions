@@ -29,4 +29,11 @@ public interface GroupTournamentRepository extends JpaRepository<GroupTournament
 
     @Query("SELECT t FROM GroupTournament t WHERE t.status = 'FINISHED' AND t.finishDate <= :cutoffDate")
     List<GroupTournament> findFinishedTournamentsOlderThan(@Param("cutoffDate") LocalDate cutoffDate);
+
+    @Query("SELECT DISTINCT t FROM GroupTournament t JOIN FETCH t.userGroup ug JOIN FETCH ug.users " +
+           "WHERE t.status = 'FINISHED' AND (" +
+           "  t.lastProcessedDate IS NULL OR t.lastProcessedDate < t.finishDate" +
+           "  OR (t.winner IS NULL AND t.finishDate >= :ttlCutoff)" +
+           ")")
+    List<GroupTournament> findFinishedTournamentsNeedingProcessing(@Param("ttlCutoff") LocalDate ttlCutoff);
 }

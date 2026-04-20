@@ -2,6 +2,7 @@ package ua.dymohlo.sportPredictions.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ua.dymohlo.sportPredictions.service.CompetitionCacheService;
@@ -25,10 +26,16 @@ public class UpdateDataSchedule {
     private final GroupStatisticsService groupStatisticsService;
     private final TournamentLifecycleService tournamentLifecycleService;
     private final SchedulerStatusService schedulerStatusService;
-    private final TelegramNotificationService telegramNotificationService;
+
+    @Autowired(required = false)
+    private TelegramNotificationService telegramNotificationService;
 
     @Scheduled(cron = "${scheduler.telegram-cron}", zone = "Europe/Kiev")
     public void sendTelegramNotifications() {
+        if (telegramNotificationService == null) {
+            log.info("Telegram disabled — skipping notifications");
+            return;
+        }
         log.info("Sending Telegram notifications");
         telegramNotificationService.notifyAllUsers();
     }

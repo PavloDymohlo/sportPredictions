@@ -80,15 +80,21 @@ public class CompetitionCacheService {
             log.info("Upserted {} competition(s) from API", apiCompetitions.size());
 
             List<Competition> obsolete = competitionRepository.findByCodeNotIn(apiCodes);
+            int removed = 0;
             for (Competition competition : obsolete) {
-                groupCompetitionRepository.deleteByCompetition(competition);
-                competitionRepository.delete(competition);
-                log.warn("Removed competition '{}' ({}) — no longer available in API subscription",
-                        competition.getName(), competition.getCode());
+                boolean deleted = competitionService.deleteIfUnusedReturning(competition);
+                if (deleted) {
+                    removed++;
+                    log.warn("Removed competition '{}' ({}) — no longer in API subscription",
+                            competition.getName(), competition.getCode());
+                } else {
+                    log.info("Competition '{}' ({}) not in API but still referenced by tournaments — keeping",
+                            competition.getName(), competition.getCode());
+                }
             }
 
-            if (!obsolete.isEmpty()) {
-                log.info("DB sync complete: removed {} obsolete competition(s)", obsolete.size());
+            if (removed > 0) {
+                log.info("DB sync complete: removed {} obsolete competition(s)", removed);
             }
         } catch (Exception e) {
             log.error("Error during competitions DB sync", e);

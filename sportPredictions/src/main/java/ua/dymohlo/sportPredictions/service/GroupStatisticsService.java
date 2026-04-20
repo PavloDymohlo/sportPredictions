@@ -53,6 +53,17 @@ public class GroupStatisticsService {
         }
 
         tournamentLifecycleService.updateTournamentStatuses();
+
+        List<GroupTournament> finishedUnprocessed = groupTournamentRepository.findFinishedTournamentsNeedingProcessing(predictionTtlLimit);
+        log.info("Found {} FINISHED tournaments needing processing", finishedUnprocessed.size());
+
+        for (GroupTournament tournament : finishedUnprocessed) {
+            try {
+                processor.processFinished(tournament, predictionTtlLimit);
+            } catch (Exception e) {
+                log.error("Error processing finished tournament {}", tournament.getId(), e);
+            }
+        }
         log.info("========== GROUP STATISTICS CALCULATION COMPLETE ==========");
     }
 

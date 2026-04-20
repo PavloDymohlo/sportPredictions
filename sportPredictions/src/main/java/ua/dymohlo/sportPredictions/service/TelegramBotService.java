@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import ua.dymohlo.sportPredictions.entity.TelegramLinkToken;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@ConditionalOnProperty(name = "telegram.enabled", havingValue = "true")
 public class TelegramBotService implements DisposableBean {
 
     private final WebClient webClient;

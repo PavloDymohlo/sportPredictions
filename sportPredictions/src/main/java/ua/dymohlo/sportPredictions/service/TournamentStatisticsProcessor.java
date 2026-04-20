@@ -32,29 +32,63 @@ public class TournamentStatisticsProcessor {
     private final MatchDataRepository matchDataRepository;
     private final MatchParser matchParser;
     private final PredictionService predictionService;
+    private final MatchDataCacheService matchDataCacheService;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Transactional
     public void process(GroupTournament tournament, LocalDate yesterday, LocalDate predictionTtlLimit) {
+        processDateRange(tournament, yesterday, predictionTtlLimit, false);
+    }
+
+    @Transactional
+    public void processFinished(GroupTournament tournament, LocalDate predictionTtlLimit) {
+        if (tournament.getFinishDate() == null) return;
+
+        // If lastProcessedDate reached finishDate but winner is still null → stats were calculated
+        // with stale/null-score data. Reset and reprocess with fresh API data.
+        boolean staleStats = tournament.getWinner() == null
+                && tournament.getLastProcessedDate() != null
+                && !tournament.getLastProcessedDate().isBefore(tournament.getFinishDate());
+
+        if (staleStats) {
+            log.info("Tournament {} has stale stats (winner=null, lastProcessed={}), resetting for reprocessing",
+                    tournament.getId(), tournament.getLastProcessedDate());
+            groupUserStatisticsRepository.deleteByGroupTournament(tournament);
+            tournament.setLastProcessedDate(null);
+            groupTournamentRepository.save(tournament);
+        }
+
+        processDateRange(tournament, tournament.getFinishDate(), predictionTtlLimit, true);
+    }
+
+    private void processDateRange(GroupTournament tournament, LocalDate upTo, LocalDate predictionTtlLimit,
+                                  boolean allowFinished) {
         LocalDate processFrom = resolveStartDate(tournament, predictionTtlLimit);
 
-        if (processFrom.isAfter(yesterday)) {
+        if (processFrom.isAfter(upTo)) {
             log.debug("Tournament {} is up to date (lastProcessed={})",
                     tournament.getId(), tournament.getLastProcessedDate());
             return;
         }
 
-        log.info("Tournament {} — processing dates {} to {}", tournament.getId(), processFrom, yesterday);
+        log.info("Tournament {} — processing dates {} to {}", tournament.getId(), processFrom, upTo);
 
         LocalDate lastSuccessfulDate = null;
-        for (LocalDate d = processFrom; !d.isAfter(yesterday); d = d.plusDays(1)) {
+        for (LocalDate d = processFrom; !d.isAfter(upTo); d = d.plusDays(1)) {
+            if (allowFinished) {
+                try {
+                    matchDataCacheService.parseAndCacheMatchesFromApi(d);
+                } catch (Exception e) {
+                    log.warn("Failed to refresh match data for {} from API, using cached data", d, e);
+                }
+            }
             if (!matchDataRepository.existsByMatchDate(d)) {
                 log.warn("No match data for {} — pausing stats for tournament {}, will retry next run",
                         d, tournament.getId());
                 break;
             }
-            calculateStatisticsForDate(tournament, d.format(DATE_FORMATTER));
+            calculateStatisticsForDate(tournament, d.format(DATE_FORMATTER), allowFinished);
             lastSuccessfulDate = d;
         }
 
@@ -64,7 +98,7 @@ public class TournamentStatisticsProcessor {
         }
     }
 
-    private void calculateStatisticsForDate(GroupTournament tournament, String date) {
+    private void calculateStatisticsForDate(GroupTournament tournament, String date, boolean allowFinished) {
         log.debug("Calculating statistics for tournament id={} in group: {} on date: {}",
                 tournament.getId(), tournament.getUserGroup().getGroupName(), date);
 
@@ -72,7 +106,8 @@ public class TournamentStatisticsProcessor {
 
         if (!isDateInTournamentRange(tournament, targetDate)) return;
 
-        if (tournament.getStatus() != CompetitionStatus.ACTIVE) {
+        if (tournament.getStatus() != CompetitionStatus.ACTIVE
+                && !(allowFinished && tournament.getStatus() == CompetitionStatus.FINISHED)) {
             log.debug("Tournament {} is not ACTIVE (status: {})", tournament.getId(), tournament.getStatus());
             return;
         }
