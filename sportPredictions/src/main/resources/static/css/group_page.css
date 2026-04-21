@@ -178,6 +178,7 @@ body {
     z-index: 9999;
     flex-direction: column;
     max-width: 1160px;
+    overflow: hidden;
 }
 
 .dropdown-content.show {
@@ -205,8 +206,8 @@ body {
 
 .competitions-list-dropdown {
     overflow-y: auto;
-    max-height: 300px;
-    min-height: 150px;
+    flex: 1;
+    min-height: 0;
     padding: 10px;
 }
 
@@ -749,7 +750,8 @@ body {
     }
 
     .competitions-list-dropdown {
-        max-height: 200px;
+        flex: 1;
+        min-height: 0;
     }
 }
 

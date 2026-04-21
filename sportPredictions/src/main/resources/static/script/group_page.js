@@ -71,9 +71,21 @@ function toggleCompetitionsDropdown() {
     dropdown.classList.remove('show');
   } else {
     const buttonRect = button.getBoundingClientRect();
-    dropdown.style.top = `${buttonRect.bottom + 5}px`;
+    const spaceBelow = window.innerHeight - buttonRect.bottom - 10;
+    const spaceAbove = buttonRect.top - 10;
+
     dropdown.style.left = `${buttonRect.left}px`;
     dropdown.style.width = `${buttonRect.width}px`;
+
+    if (spaceBelow >= 200 || spaceBelow >= spaceAbove) {
+      dropdown.style.top = `${buttonRect.bottom + 5}px`;
+      dropdown.style.bottom = 'auto';
+      dropdown.style.maxHeight = `${spaceBelow}px`;
+    } else {
+      dropdown.style.top = 'auto';
+      dropdown.style.bottom = `${window.innerHeight - buttonRect.top + 5}px`;
+      dropdown.style.maxHeight = `${spaceAbove}px`;
+    }
 
     dropdown.classList.add('show');
   }
