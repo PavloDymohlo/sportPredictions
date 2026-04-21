@@ -45,6 +45,29 @@
     </div>
 </div>
 
+<div id="chat-container" class="chat-container">
+    <div class="chat-header" onclick="toggleChat()">
+        <span data-i18n="chat.header">Group Chat</span>
+        <span id="chat-toggle-icon">&#x25B2;</span>
+    </div>
+    <div id="chat-body" class="chat-body open">
+        <div id="chat-messages" class="chat-messages">
+            <button id="chat-older-btn" class="chat-older-btn" onclick="loadOlderMessages()" style="display:none;"
+                    data-i18n="chat.older_btn">Older messages</button>
+            <div id="chat-messages-list"></div>
+        </div>
+        <div class="chat-input-area">
+            <textarea id="chat-input" class="chat-input" maxlength="500" rows="1"
+                      data-i18n="chat.input_placeholder"
+                      placeholder="Write a message..."
+                      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"
+                      onkeydown="handleChatKeydown(event)"></textarea>
+            <button class="chat-send-btn" onclick="sendChatMessage()" data-i18n="chat.send_btn">Send</button>
+        </div>
+        <div id="chat-char-counter" class="chat-char-counter">0 / 500</div>
+    </div>
+</div>
+
 <div id="join-requests-panel" class="join-requests-panel" style="display: none;">
     <div class="panel-header-requests" data-i18n="group.join_requests_header">Join Requests (Leader Only)</div>
     <div id="join-requests-list" class="join-requests-list">

@@ -806,6 +806,148 @@ document.addEventListener('change', function(event) {
   }
 });
 
+let chatCurrentPage = 0;
+let chatHasMore = false;
+
+function toggleChat() {
+  const body = document.getElementById('chat-body');
+  const icon = document.getElementById('chat-toggle-icon');
+  const isOpen = body.classList.contains('open');
+  if (isOpen) {
+    body.classList.remove('open');
+    icon.innerHTML = '&#x25BC;';
+  } else {
+    body.classList.add('open');
+    icon.innerHTML = '&#x25B2;';
+  }
+}
+
+function loadChatPage(groupName, page, prepend) {
+  fetch(`/api/v0/chat/${encodeURIComponent(groupName)}?page=${page}`, {
+    credentials: 'include'
+  })
+    .then(r => r.json())
+    .then(data => {
+      chatCurrentPage = page;
+      chatHasMore = !data.last;
+      document.getElementById('chat-older-btn').style.display = chatHasMore ? 'block' : 'none';
+
+      const messages = (data.content || []).slice().reverse();
+      if (prepend) {
+        prependChatMessages(messages);
+      } else {
+        renderChatMessages(messages);
+      }
+    })
+    .catch(() => showToast(t('chat.load_error'), 'error'));
+}
+
+function renderChatMessages(messages) {
+  const list = document.getElementById('chat-messages-list');
+  if (messages.length === 0) {
+    list.innerHTML = `<p class="chat-no-messages">${t('chat.no_messages')}</p>`;
+    return;
+  }
+  list.innerHTML = messages.map(m => buildMessageHTML(m)).join('');
+  scrollChatToBottom();
+}
+
+function prependChatMessages(messages) {
+  const list = document.getElementById('chat-messages-list');
+  const noMsg = list.querySelector('.chat-no-messages');
+  if (noMsg) noMsg.remove();
+  const html = messages.map(m => buildMessageHTML(m)).join('');
+  list.insertAdjacentHTML('afterbegin', html);
+}
+
+function buildMessageHTML(msg) {
+  const currentUser = localStorage.getItem('userName');
+  const isOwn = msg.username === currentUser;
+  const time = formatChatTime(msg.createdAt);
+  return `<div class="chat-message${isOwn ? ' own-message' : ''}">
+    <div class="chat-meta">
+      <span class="chat-username">${escapeHtml(msg.username)}</span>
+      <span class="chat-time">${time}</span>
+    </div>
+    <div class="chat-text">${escapeHtml(msg.message)}</div>
+  </div>`;
+}
+
+function formatChatTime(isoStr) {
+  if (!isoStr) return '';
+  const d = new Date(isoStr);
+  const pad = n => String(n).padStart(2, '0');
+  return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function scrollChatToBottom() {
+  const container = document.getElementById('chat-messages');
+  container.scrollTop = container.scrollHeight;
+}
+
+function loadOlderMessages() {
+  const groupName = getGroupNameFromUrl();
+  loadChatPage(groupName, chatCurrentPage + 1, true);
+}
+
+function sendChatMessage() {
+  const input = document.getElementById('chat-input');
+  const message = input.value.trim();
+  if (!message) {
+    showToast(t('chat.empty_error'), 'warning');
+    return;
+  }
+  const groupName = getGroupNameFromUrl();
+  fetch(`/api/v0/chat/${encodeURIComponent(groupName)}`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message })
+  })
+    .then(r => {
+      if (!r.ok) return r.json().then(e => { throw new Error(e.error || 'error'); });
+    })
+    .then(() => {
+      input.value = '';
+      input.style.height = 'auto';
+      document.getElementById('chat-char-counter').textContent = '0 / 500';
+      loadChatPage(groupName, 0, false);
+    })
+    .catch(e => {
+      const msg = e.message === 'Only text characters allowed'
+        ? t('chat.text_only_error')
+        : t('chat.send_error');
+      showToast(msg, 'error');
+    });
+}
+
+function handleChatKeydown(event) {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    sendChatMessage();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const chatInput = document.getElementById('chat-input');
+  if (chatInput) {
+    chatInput.addEventListener('input', () => {
+      const len = chatInput.value.length;
+      const counter = document.getElementById('chat-char-counter');
+      counter.textContent = `${len} / 500`;
+      counter.className = 'chat-char-counter' + (len > 450 ? ' over-limit' : '');
+    });
+  }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   const groupName = getGroupNameFromUrl();
   console.log('Current group:', groupName);
@@ -813,6 +955,8 @@ document.addEventListener('DOMContentLoaded', () => {
   loadGroupTournaments(groupName);
 
   loadGroupMembers(groupName);
+
+  loadChatPage(groupName, 0, false);
 
   if (typeof GROUP_LEADER_NAME !== 'undefined' && GROUP_LEADER_NAME !== null) {
     if (checkIfLeader(GROUP_LEADER_NAME)) {
