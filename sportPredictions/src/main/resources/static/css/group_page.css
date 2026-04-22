@@ -206,9 +206,8 @@ body {
 
 .competitions-list-dropdown {
     overflow-y: auto;
-    flex: 1;
-    min-height: 0;
     padding: 10px;
+    overscroll-behavior: contain;
 }
 
 .loading-text {
@@ -750,8 +749,7 @@ body {
     }
 
     .competitions-list-dropdown {
-        flex: 1;
-        min-height: 0;
+        overscroll-behavior: contain;
     }
 }
 

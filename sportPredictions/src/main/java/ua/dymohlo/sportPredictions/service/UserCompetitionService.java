@@ -88,7 +88,6 @@ public class UserCompetitionService {
         for (Competition oldComp : currentCompetitions) {
             if (!newCompetitions.contains(oldComp)) {
                 userCompetitionRepository.deleteByUserAndCompetition(user, oldComp);
-                competitionService.deleteIfUnused(oldComp);
             }
         }
     }

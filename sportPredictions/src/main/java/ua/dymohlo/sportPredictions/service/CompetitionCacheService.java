@@ -14,9 +14,11 @@ import ua.dymohlo.sportPredictions.repository.GroupCompetitionRepository;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 @Slf4j
@@ -32,6 +34,9 @@ public class CompetitionCacheService {
     private final GroupCompetitionRepository groupCompetitionRepository;
     private final ObjectMapper objectMapper;
     private final TaskScheduler taskScheduler;
+
+    // In-memory cache of full competition list from API
+    private final List<CompetitionResponse> cachedCompetitions = new CopyOnWriteArrayList<>();
 
     public String parseCompetitionsData() {
         return parseCompetitionsDataInternal(false);
@@ -69,15 +74,26 @@ public class CompetitionCacheService {
                 return;
             }
 
+            List<CompetitionResponse> freshCache = new ArrayList<>();
             for (Map<String, Object> comp : apiCompetitions) {
                 String country = (String) comp.get("country");
                 String name = (String) comp.get("name");
                 String code = (String) comp.get("code");
                 if (country != null && name != null && code != null) {
-                    competitionService.findOrCreate(country, name, code);
+                    Competition saved = competitionService.findOrCreate(country, name, code);
+                    freshCache.add(CompetitionResponse.builder()
+                            .id(saved.getId())
+                            .country(saved.getCountry())
+                            .name(saved.getName())
+                            .code(saved.getCode())
+                            .build());
                 }
             }
             log.info("Upserted {} competition(s) from API", apiCompetitions.size());
+
+            // Refresh in-memory cache with the full API list
+            cachedCompetitions.clear();
+            cachedCompetitions.addAll(freshCache);
 
             List<Competition> obsolete = competitionRepository.findByCodeNotIn(apiCodes);
             int removed = 0;
@@ -101,15 +117,14 @@ public class CompetitionCacheService {
         }
     }
 
+    // Returns full list of all API competitions — used for the selection UI.
+    // Falls back to DB if the in-memory cache is empty (e.g. API was down at startup).
     public List<CompetitionResponse> getCompetitionsList() {
-        List<Competition> competitions = competitionRepository.findAll();
-        if (competitions.isEmpty()) {
-            log.info("No competitions in DB, fetching from API");
-            parseCompetitionsData();
-            competitions = competitionRepository.findAll();
+        if (!cachedCompetitions.isEmpty()) {
+            return List.copyOf(cachedCompetitions);
         }
-        log.info("Retrieved {} competitions from DB", competitions.size());
-        return competitions.stream()
+        log.warn("In-memory competition cache is empty, falling back to DB");
+        return competitionRepository.findAll().stream()
                 .map(c -> CompetitionResponse.builder()
                         .id(c.getId())
                         .country(c.getCountry())

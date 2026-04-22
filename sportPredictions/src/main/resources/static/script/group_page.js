@@ -69,26 +69,36 @@ function toggleCompetitionsDropdown() {
 
   if (dropdown.classList.contains('show')) {
     dropdown.classList.remove('show');
-  } else {
-    const buttonRect = button.getBoundingClientRect();
-    const spaceBelow = window.innerHeight - buttonRect.bottom - 10;
-    const spaceAbove = buttonRect.top - 10;
-
-    dropdown.style.left = `${buttonRect.left}px`;
-    dropdown.style.width = `${buttonRect.width}px`;
-
-    if (spaceBelow >= 200 || spaceBelow >= spaceAbove) {
-      dropdown.style.top = `${buttonRect.bottom + 5}px`;
-      dropdown.style.bottom = 'auto';
-      dropdown.style.maxHeight = `${spaceBelow}px`;
-    } else {
-      dropdown.style.top = 'auto';
-      dropdown.style.bottom = `${window.innerHeight - buttonRect.top + 5}px`;
-      dropdown.style.maxHeight = `${spaceAbove}px`;
-    }
-
-    dropdown.classList.add('show');
+    return;
   }
+
+  const buttonRect = button.getBoundingClientRect();
+  const spaceBelow = window.innerHeight - buttonRect.bottom - 10;
+  const spaceAbove = buttonRect.top - 10;
+
+  dropdown.style.left = `${buttonRect.left}px`;
+  dropdown.style.width = `${buttonRect.width}px`;
+
+  let maxH;
+  if (spaceBelow >= 200 || spaceBelow >= spaceAbove) {
+    dropdown.style.top = `${buttonRect.bottom + 5}px`;
+    dropdown.style.bottom = 'auto';
+    maxH = spaceBelow;
+  } else {
+    dropdown.style.top = 'auto';
+    dropdown.style.bottom = `${window.innerHeight - buttonRect.top + 5}px`;
+    maxH = spaceAbove;
+  }
+
+  dropdown.style.maxHeight = `${maxH}px`;
+
+  // Явно обмежуємо висоту списку: загальна висота мінус пошук (~54px) і футер (~54px)
+  const listEl = dropdown.querySelector('.competitions-list-dropdown');
+  if (listEl) {
+    listEl.style.maxHeight = `${Math.max(100, maxH - 108)}px`;
+  }
+
+  dropdown.classList.add('show');
 }
 
 function filterCompetitions() {
