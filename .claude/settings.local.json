@@ -4,7 +4,10 @@
       "Bash(grep:*)",
       "Bash(./mvnw package:*)",
       "Bash(xargs ls:*)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(mvn compile *)",
+      "Read(//mnt/c/Users/DELL/IdeaProjects/sportPredictions/**)",
+      "Bash(./mvnw compile *)"
     ]
   }
 }

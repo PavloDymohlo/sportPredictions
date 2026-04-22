@@ -9,7 +9,6 @@ import ua.dymohlo.sportPredictions.dto.response.CompetitionResponse;
 import ua.dymohlo.sportPredictions.entity.Competition;
 import ua.dymohlo.sportPredictions.entity.User;
 import ua.dymohlo.sportPredictions.entity.UserCompetition;
-import ua.dymohlo.sportPredictions.repository.CompetitionRepository;
 import ua.dymohlo.sportPredictions.repository.UserCompetitionRepository;
 import ua.dymohlo.sportPredictions.repository.UserRepository;
 
@@ -25,7 +24,6 @@ import java.util.Optional;
 public class UserCompetitionService {
 
     private final UserRepository userRepository;
-    private final CompetitionRepository competitionRepository;
     private final CompetitionService competitionService;
     private final UserCompetitionRepository userCompetitionRepository;
 
@@ -90,10 +88,7 @@ public class UserCompetitionService {
         for (Competition oldComp : currentCompetitions) {
             if (!newCompetitions.contains(oldComp)) {
                 userCompetitionRepository.deleteByUserAndCompetition(user, oldComp);
-
-                if (competitionService.isCompetitionUnused(oldComp.getId())) {
-                    competitionRepository.delete(oldComp);
-                }
+                competitionService.deleteIfUnused(oldComp);
             }
         }
     }
