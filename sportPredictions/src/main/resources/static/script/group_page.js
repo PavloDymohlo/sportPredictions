@@ -408,7 +408,7 @@ async function loadGroupTournaments(groupName) {
           ${deleteBtn}
         </div>
         <div class="tournament-competitions-text">${competitionText || t('msg.no_competitions')}</div>
-        ${tournament.winner ? `<div class="tournament-winner-text">&#127942; ${t('msg.winner_label')}${tournament.winner} &#127942;</div>` : ''}
+        ${tournament.winners && tournament.winners.length > 0 ? `<div class="tournament-winner-text">&#127942; ${t('msg.winner_label')}${tournament.winners.join(', ')} &#127942;</div>` : ''}
         ${editSection}
       `;
 

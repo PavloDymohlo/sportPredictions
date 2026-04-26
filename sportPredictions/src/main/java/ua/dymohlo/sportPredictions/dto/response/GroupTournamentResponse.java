@@ -18,5 +18,5 @@ public class GroupTournamentResponse {
     private LocalDate endDate;
     private String status;
     private List<String> competitions;
-    private String winner;
+    private List<String> winners;
 }

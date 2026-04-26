@@ -16,6 +16,7 @@ import ua.dymohlo.sportPredictions.entity.Competition;
 import ua.dymohlo.sportPredictions.entity.GroupCompetition;
 import ua.dymohlo.sportPredictions.entity.GroupJoinRequest;
 import ua.dymohlo.sportPredictions.entity.GroupTournament;
+import ua.dymohlo.sportPredictions.entity.GroupUserStatistics;
 import ua.dymohlo.sportPredictions.entity.User;
 import ua.dymohlo.sportPredictions.entity.UserGroup;
 import ua.dymohlo.sportPredictions.enums.CompetitionStatus;
@@ -176,8 +177,26 @@ public class UserGroupService {
                         .competitions(groupCompetitionRepository.findByGroupTournament(t).stream()
                                 .map(gc -> gc.getCompetition().getCountry() + ":" + gc.getCompetition().getName())
                                 .toList())
-                        .winner(t.getWinner() != null ? t.getWinner().getUserName() : null)
+                        .winners(computeWinners(t, group))
                         .build())
+                .toList();
+    }
+
+    private List<String> computeWinners(GroupTournament tournament, UserGroup group) {
+        if (tournament.getWinner() == null) {
+            return List.of();
+        }
+        List<GroupUserStatistics> stats =
+                groupUserStatisticsRepository.findByGroupTournamentOrderedByRanking(tournament);
+        if (stats.isEmpty() || stats.get(0).getCorrectPredictions() == 0) {
+            return group.getUsers().stream()
+                    .map(User::getUserName)
+                    .toList();
+        }
+        long maxCorrect = stats.get(0).getCorrectPredictions();
+        return stats.stream()
+                .filter(s -> s.getCorrectPredictions() == maxCorrect)
+                .map(s -> s.getUser().getUserName())
                 .toList();
     }
 
